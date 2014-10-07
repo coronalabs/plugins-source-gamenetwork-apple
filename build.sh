@@ -2,7 +2,7 @@
 
 path=`dirname $0`
 
-PLUGIN_NAME=ads-admob
+PLUGIN_NAME=gameNetwork-apple
 
 #
 # Checks exit value for error

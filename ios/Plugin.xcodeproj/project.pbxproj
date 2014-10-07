@@ -77,9 +77,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A4E253B5166D6FB300DCDC2C /* gameNetwork-iOS */ = {
+		A4E253B5166D6FB300DCDC2C /* gameNetwork-apple */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "gameNetwork-iOS" */;
+			buildConfigurationList = A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "gameNetwork-apple" */;
 			buildPhases = (
 				A4E253B2166D6FB300DCDC2C /* Sources */,
 				A4E253B3166D6FB300DCDC2C /* Frameworks */,
@@ -89,7 +89,7 @@
 			);
 			dependencies = (
 			);
-			name = "gameNetwork-iOS";
+			name = "gameNetwork-apple";
 			productName = plugin_library;
 			productReference = A4E253B6166D6FB300DCDC2C /* libgameNetwork-iOS.a */;
 			productType = "com.apple.product-type.library.static";
@@ -114,7 +114,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A4E253B5166D6FB300DCDC2C /* gameNetwork-iOS */,
+				A4E253B5166D6FB300DCDC2C /* gameNetwork-apple */,
 			);
 		};
 /* End PBXProject section */
@@ -232,7 +232,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "gameNetwork-iOS" */ = {
+		A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "gameNetwork-apple" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A4E253C0166D6FB300DCDC2C /* Debug */,
