@@ -1,28 +1,29 @@
-# admob.*
+
+# gameNetwork.*
 
 > --------------------- ------------------------------------------------------------------------------------------
-> __Type__              [CoronaProvider][api.type.CoronaProvider]
-> __Library__           [ads.*][api.library.ads]
+> __Type__              [Library][api.type.Library]
 > __Revision__          [REVISION_LABEL](REVISION_URL)
-> __Keywords__          ads, advertising, admob
-> __Availability__		Starter, Basic, Pro, Enterprise
-> __Platforms__			Android, iOS
+> __Keywords__          gameNetwork, Game Center
+> __Availability__      Starter, Basic, Pro, Enterprise
+> __Platforms__			iOS
 > --------------------- ------------------------------------------------------------------------------------------
-
 
 ## Overview
 
-The AdMob plugin offers easy integration of AdMob ads using the [ads][api.library.ads] library and [ads.init()][plugin.ads-admob.init].
+Corona's `gameNetwork` library provides access to social gaming features such as public leaderboards and achievements.
 
+### Game Center
+
+[Game Center](https://developer.apple.com/game-center/) (iOS) lets friends in on the action with leaderboards and achievements. For more information on Game Center integration, read our [tutorial](http://www.coronalabs.com/blog/2012/01/17/tutorial-game-center-integration-ios/) or the [Game&nbsp;Center&nbsp;Programming&nbsp;Guide](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/GameKit_Guide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008304). Note that the nomenclature used in the Corona APIs for Game Center attempt to match the official Game Center APIs as much as possible, allowing you to <nobr>cross-reference</nobr> with official Game Center documentation. Note that Game Center is not supported in the Corona Simulator.
 
 ## Functions
 
-#### [ads.init()][plugin.ads-admob.init]
+#### [gameNetwork.init()][plugin.gamenetwork-apple.init]
 
-#### [ads.show()][plugin.ads-admob.show]
+#### [gameNetwork.request()][plugin.gamenetwork-apple.request]
 
-#### [ads.hide()][plugin.ads-admob.hide]
-
+#### [gameNetwork.show()][plugin.gamenetwork-apple.show]
 
 ## Project Settings
 
@@ -33,36 +34,15 @@ settings =
 {
 	plugins =
 	{
-		["CoronaProvider.ads.admob"] =
+		["CoronaProvider.gameNetwork.apple"] =
 		{
-			publisherId = "com.coronalabs"
+			publisherId = "com.coronalabs",
+			supportedPlatforms = { iphone=true, ["iphone-sim"]=true },
 		},
-	},		
+	},
 }
 ``````
 
-### Android
+## Sample Code
 
-For Android, include the following in the `android` table of `build.settings`:
-
-``````lua
-	android =
-	{
-		usesPermissions =
-		{
-			"android.permission.INTERNET",
-			"android.permission.ACCESS_NETWORK_STATE",
-		},
-	},
-``````
-
-
-## Sample
-
-[https://github.com/coronalabs/plugins-sample-ads-admob/](https://github.com/coronalabs/plugins-sample-ads-admob)
-
-
-## Support
-
-* [http://www.google.com/ads/admob/](http://www.google.com/ads/admob/)
-* [Corona Forums](http://forums.coronalabs.com/forum/545-monetization-in-app-purchases-ads-etc/)
+Game Center turn-based multiplayer sample code can be found [here](https://github.com/coronalabs/gameNetwork-iOS-turnbased-multiplayer).

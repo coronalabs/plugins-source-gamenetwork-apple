@@ -1,31 +1,76 @@
-# admob.init()
+
+# gameNetwork.init()
 
 > --------------------- ------------------------------------------------------------------------------------------
 > __Type__              [Function][api.type.Function]
+> __Library__           [gameNetwork.*][plugin.gamenetwork-apple]
 > __Return value__      none
 > __Revision__          [REVISION_LABEL](REVISION_URL)
-> __Keywords__          ads, advertising, admob
-> __See also__          [ads.show()][plugin.ads-admob.show]
->								[admob.*][plugin.ads-admob]
+> __Keywords__          gameNetwork, Game Center
+> __See also__          [gameNetwork.request()][plugin.gamenetwork-apple.request]
+>								[gameNetwork.show()][plugin.gamenetwork-apple.gameNetwork.show]
 > --------------------- ------------------------------------------------------------------------------------------
 
 
 ## Overview
 
-`ads.init()` initializes the Corona `ads` library by specifying the name of the ad network service provider and the app identifier.
-
-Once the `ads` library is initialized, you can request an ad using [ads.show()][plugin.ads-admob.show].
+Initializes an app for use with the game network provider.
 
 
 ## Syntax
 
-	ads.init( providerName, appId [, adListener] )
+	gameNetwork.init( providerName [, ...] )
 
 ##### providerName ~^(required)^~
-_[String][api.type.String]._ String value for the provider name. For AdMob, use `"admob"`.
+_[String][api.type.String]._ Name of the `gameNetwork` provider to initialize.
 
-##### appId ~^(required)^~
-_[String][api.type.String]._ String containing the app ID.
+* `"gamecenter"` &mdash; only available on iOS.
 
-##### adListener ~^(optional)^~
-_[Listener][api.type.Listener]._ Listener function that will receive an event indicating if showing an ad via [ads.show()][plugin.ads-admob.show] has succeeded or failed. It will be called for every new ad that is requested. In the passed event, `event.isError` will be `true` if the system failed to retrieve an ad &mdash; this can occur if the ad network is unreachable or is out of inventory/ads, in which case nothing is shown on screen. `event.isError` will be `false` if an ad was successfully retrieved and displayed on screen.
+
+## Providers
+
+### Game Center
+
+Game Center is a service provided by Apple and is only available on iOS.
+
+    gameNetwork.init( "gamecenter" [, initCallback] )
+
+##### initCallback ~^(optional)^~
+_[Listener][api.type.Listener]._ If `"gamecenter"` is specified as `providerName`, this is a callback function. On successful login, `event.data` will be `true`; if unsuccessful, `event.data` will be `false`. When problems such as network errors occur, `event.errorCode` ([integer][api.type.Number]) and `event.errorMessage` ([string][api.type.String]) will be defined.
+
+The `event.type` called `"showSignIn"` will be invoked before the Game Center login screen appears. This gives you a chance to pause your game or do any special actions you need before the login view takes over the screen. On successful login, `event.data` will return the login status (presumably `false`), so code which does not check for this type will still work. When this view is dismissed, the callback will be invoked again with `event.type` set to `"init"` to handle the results of the login. 
+
+Be aware that iOS backgrounding will cause your app to automatically log out the user from Game Center. When the app is resumed, Game Center will automatically try to <nobr>re-login</nobr> the user. The callback function you specified here will be invoked again, providing the result of that <nobr>re-login</nobr> attempt. As such, this callback function exists for the life of your application. With Game Center, it's advisable to avoid calling other Game Center functions when the user is not logged in.
+
+<div class="guide-notebox-imp">
+<div class="notebox-title-imp">Important</div>
+
+If using/testing Game Center on iOS&nbsp;8+ and Xcode&nbsp;6+, you must enable the Game&nbsp;Center sandbox by opening the __Settings__ app on the device, selecting __Game&nbsp;Center__ and enabling __Sandbox__.
+
+</div>
+
+## Example
+
+`````lua
+local gameNetwork = require( "gameNetwork" )
+
+local loggedIntoGC = false
+
+local function initCallback( event )
+
+	if ( event.type == "showSignIn" ) then
+		-- This is an opportunity to pause your game or do other things you might need to do while the Game Center Sign-In controller is up.
+	elseif ( event.data ) then
+		loggedIntoGC = true
+		native.showAlert( "Success!", "", { "OK" } )
+	end
+end
+
+local function onSystemEvent( event ) 
+	if ( event.type == "applicationStart" ) then
+		gameNetwork.init( "gamecenter", initCallback )
+		return true
+	end
+end
+Runtime:addEventListener( "system", onSystemEvent )
+`````
