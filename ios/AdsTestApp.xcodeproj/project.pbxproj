@@ -44,7 +44,7 @@
 		A489DE2D16854301007FB757 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A489DE2A16854301007FB757 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		A498B81816D70EE80091A148 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A498B81716D70EE80091A148 /* CoronaResources.bundle */; };
 		A4E2537F166AE3DC00DCDC2C /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E2537E166AE3DC00DCDC2C /* Twitter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		A4E253E5166DE7E000DCDC2C /* libads-admob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libads-admob.a */; };
+		A4E253E5166DE7E000DCDC2C /* libgameNetwork-apple.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libgameNetwork-apple.a */; };
 		A4F0615A16854336009C7C8F /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4F0615916854336009C7C8F /* FacebookSDK.framework */; };
 		F83D51181868C67B0062585E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F83D51171868C67A0062585E /* CoreVideo.framework */; };
 		F83D51191868C6810062585E /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484112315114F700074BD57 /* GLKit.framework */; };
@@ -76,7 +76,7 @@
 		A447B6691666FD43009EA762 /* CoronaSDK3rdPartyLicenses.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CoronaSDK3rdPartyLicenses.txt; path = CoronaEnterprise/Corona/shared/resource/CoronaSDK3rdPartyLicenses.txt; sourceTree = SOURCE_ROOT; };
 		A447B67116670028009EA762 /* libplayer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libplayer.a; path = CoronaEnterprise/Corona/ios/lib/libplayer.a; sourceTree = SOURCE_ROOT; };
 		A447B824166856F3009EA762 /* main.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = main.lua; path = ../Corona/main.lua; sourceTree = SOURCE_ROOT; };
-		A484111915114F700074BD57 /* AdsTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdsTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A484111915114F700074BD57 /* test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = test.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A484111D15114F700074BD57 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A484111F15114F700074BD57 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A484112115114F700074BD57 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -156,7 +156,7 @@
 				A4E2537F166AE3DC00DCDC2C /* Twitter.framework in Frameworks */,
 				A484111E15114F700074BD57 /* UIKit.framework in Frameworks */,
 				A447B67C16675195009EA762 /* libplayer.a in Frameworks */,
-				A4E253E5166DE7E000DCDC2C /* libads-admob.a in Frameworks */,
+				A4E253E5166DE7E000DCDC2C /* libgameNetwork-apple.a in Frameworks */,
 				A4F0615A16854336009C7C8F /* FacebookSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,7 +205,7 @@
 		A484111A15114F700074BD57 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A484111915114F700074BD57 /* AdsTestApp.app */,
+				A484111915114F700074BD57 /* test.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -279,7 +279,7 @@
 		A4E253DB166DE7C800DCDC2C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A4E253E2166DE7C800DCDC2C /* libads-admob.a */,
+				A4E253E2166DE7C800DCDC2C /* libgameNetwork-apple.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -287,9 +287,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A484111815114F700074BD57 /* AdsTestApp */ = {
+		A484111815114F700074BD57 /* test */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "AdsTestApp" */;
+			buildConfigurationList = A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "test" */;
 			buildPhases = (
 				A484111715114F700074BD57 /* Resources */,
 				A484111515114F700074BD57 /* Sources */,
@@ -304,9 +304,9 @@
 			dependencies = (
 				A4E253E4166DE7D800DCDC2C /* PBXTargetDependency */,
 			);
-			name = AdsTestApp;
+			name = test;
 			productName = CoronaSampleApp;
-			productReference = A484111915114F700074BD57 /* AdsTestApp.app */;
+			productReference = A484111915114F700074BD57 /* test.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -340,17 +340,16 @@
 			);
 			projectRoot = "";
 			targets = (
-				A484111815114F700074BD57 /* AdsTestApp */,
+				A484111815114F700074BD57 /* test */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A4E253E2166DE7C800DCDC2C /* libads-admob.a */ = {
+		A4E253E2166DE7C800DCDC2C /* libgameNetwork-apple.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = "libads-admob.a";
-			path = "libgameNetwork-iOS.a";
+			path = "libgameNetwork-apple.a";
 			remoteRef = A4E253E1166DE7C800DCDC2C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -585,7 +584,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "AdsTestApp" */ = {
+		A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A484114315114F700074BD57 /* Debug */,

@@ -11,7 +11,7 @@
 	<key>CFBundleIconFiles</key>
 	<array/>
 	<key>CFBundleIdentifier</key>
-	<string>com.mycompaasdfny.$(PRODUCT_NAME:rfc1034identifier)</string>
+	<string>com.coronalabs.gamecenter.$(PRODUCT_NAME:rfc1034identifier)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -35,6 +35,7 @@
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
+		<string>gamekit</string>
 	</array>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleBlackTranslucent</string>

@@ -25,7 +25,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A4E253B6166D6FB300DCDC2C /* libgameNetwork-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgameNetwork-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4E253B6166D6FB300DCDC2C /* libgameNetwork-apple.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgameNetwork-apple.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8C50A5219B95DA800F17D98 /* IOSGameCenterProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOSGameCenterProvider.h; path = Plugin/IOSGameCenterProvider.h; sourceTree = "<group>"; };
 		F8C50A5319B95DA800F17D98 /* IOSGameCenterProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IOSGameCenterProvider.mm; path = Plugin/IOSGameCenterProvider.mm; sourceTree = "<group>"; };
 		F8C50A5419B95DA800F17D98 /* Rtt_IPhoneGameCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rtt_IPhoneGameCenter.h; path = Plugin/Rtt_IPhoneGameCenter.h; sourceTree = "<group>"; };
@@ -69,7 +69,7 @@
 		A484111A15114F700074BD57 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A4E253B6166D6FB300DCDC2C /* libgameNetwork-iOS.a */,
+				A4E253B6166D6FB300DCDC2C /* libgameNetwork-apple.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -91,7 +91,7 @@
 			);
 			name = "gameNetwork-apple";
 			productName = plugin_library;
-			productReference = A4E253B6166D6FB300DCDC2C /* libgameNetwork-iOS.a */;
+			productReference = A4E253B6166D6FB300DCDC2C /* libgameNetwork-apple.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */

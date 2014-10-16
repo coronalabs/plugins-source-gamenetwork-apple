@@ -1070,8 +1070,11 @@ IPhoneGameCenter::Init( lua_State *L, int index )
 		
 		fIsInitialized = true;
 		fGameCenterDelegate = [[GameCenterDelegate alloc] init];
+		fGameCenterDelegate.runtime = fRuntime;
 		fTurnBasedMatchMakerDelegate = [[TurnBasedMatchMakerDelegate alloc] init];
+		fTurnBasedMatchMakerDelegate.runtime = fRuntime;
 		fTurnBasedEventHandlerDelegate = [[TurnBasedEventHandlerDelegate alloc] init];
+		fTurnBasedEventHandlerDelegate.runtime = fRuntime;
 		[GKTurnBasedEventHandler sharedTurnBasedEventHandler].delegate = fTurnBasedEventHandlerDelegate;
 		
 		// This is used to store matches so that we can leave them
