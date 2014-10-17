@@ -2,18 +2,18 @@
 
 > --------------------- ------------------------------------------------------------------------------------------
 > __Type__              [Function][api.type.Function]
-> __Library__           [gameNetwork.*][plugin.gamenetwork-apple]
+> __Library__           [gameNetwork.*][api.library.gameNetwork]
 > __Return value__      none
 > __Revision__          [REVISION_LABEL](REVISION_URL)
-> __Keywords__          gameNetwork, request, gamecenter
-> __See also__          [gameNetwork.init()][plugin.gamenetwork-apple.init]
->								[gameNetwork.request()][plugin.gamenetwork-apple.show]
+> __Keywords__          gameNetwork, Game Center
+> __See also__          [gameNetwork.init()][plugin.gameNetwork-apple.init]
+>								[gameNetwork.show()][plugin.gameNetwork-apple.show]
 > --------------------- ------------------------------------------------------------------------------------------
 
 
 ## Overview
 
-Send or request information to/from the game network provider.
+Send or request information to/from [Game Center](https://developer.apple.com/game-center/).
 
 
 ## Syntax
@@ -21,19 +21,15 @@ Send or request information to/from the game network provider.
     gameNetwork.request( command [, params] )
 
 ##### command ~^(required)^~
-_[String][api.type.String]._ String value as supported by the game network. See [Command&nbsp;Reference](#commands) below.
+_[String][api.type.String]._ String value as supported by Game Center &mdash; see [Command&nbsp;Reference](#commands) below.
 
 ##### params ~^(optional)^~
-_[Table][api.type.Table]._ Table of parameters allowed by the game network.
-
-* For Game Center, see [Parameter&nbsp;Reference](#params) below.
+_[Table][api.type.Table]._ Table of parameters allowed by Game Center &mdash; see [Parameter&nbsp;Reference](#params) below.
 
 
 <a id="commands">
 
 ## Command Reference
-
-### Game Center
 
 For the `command` parameter, Game&nbsp;Center supports the following values:
 
@@ -66,8 +62,6 @@ For the `command` parameter, Game&nbsp;Center supports the following values:
 <a id="params">
 
 ## Parameter Reference
-
-### Game Center
 
 Depending on the specified `command` parameter, the contents of the `params` table will vary.
 
@@ -447,9 +441,9 @@ When handling the results of a `"loadCurrentPlayer"` call, `event.data` in the c
 
 #### Create Match
 
-For the `command` parameter of `"createMatch"`, this function creates a turn-based match with the specified players.
+For the `command` parameter of `"createMatch"`, this function creates a <nobr>turn-based</nobr> match with the specified players. Unlike `gameNetwork.show( "createMatch", ... )` ([reference][plugin.gameNetwork-apple.show]), this simply creates a [match][api.type.GameNetwork.match] object and lets you show a custom user interface.
 
-Unlike `gameNetwork.show( "createMatch", ... )` ([reference][plugin.gamenetwork-apple.show]), this simply creates a [match][api.type.GameNetwork.match] object and lets you show a custom user interface.
+Note that this call assumes the currently <nobr>logged-in</nobr> player will be part of the match. Thus, you should not include the current player's ID in the `playerIDs` table. In addition, ensure that `maxPlayers` is set to a value which accommodates both the requested number of players and the current player. For example, if you request a match with two players in the `playerIDs` table, `maxPlayers` should be set to `3` or higher.
 
 ``````lua
 gameNetwork.request( "createMatch",
@@ -473,7 +467,7 @@ gameNetwork.request( "createMatch",
 
 * `playerGroup` — The game type which will be created, for example a quick game or long game. Only players whose requests share the same `playerGroup` value are <nobr>auto-matched</nobr> by Game Center.
 
-* `playerAttributes` — Mask that specifies the role that the local player would like to play in the game. See the [Game&nbsp;Center&nbsp;Programming&nbsp;Guide](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/GameKit_Guide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008304) for more information.
+* `playerAttributes` — Mask that specifies the role that the local player would like to play in the game.
 
 * `inviteMessage` — Custom invitation message for the match.
 
@@ -635,8 +629,6 @@ gameNetwork.request( "loadTurnBasedMatchMaxNumberOfParticipants", { listener=req
 ``````
 
 ## Example
-
-##### Game Center
 
 `````lua
 -- Request callback function

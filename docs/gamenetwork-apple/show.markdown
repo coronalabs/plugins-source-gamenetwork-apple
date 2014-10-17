@@ -3,7 +3,7 @@
 
 > --------------------- ------------------------------------------------------------------------------------------
 > __Type__              [Function][api.type.Function]
-> __Library__           [gameNetwork.*][plugin.gamenetwork-apple]
+> __Library__           [gameNetwork.*][api.library.gameNetwork]
 > __Revision__          [REVISION_LABEL](REVISION_URL)
 > __Keywords__          gameNetwork, Game Center
 > __See also__          [gameNetwork.init()][plugin.gamenetwork-apple.init]
@@ -21,21 +21,7 @@ Displays the requested game network information to the user.
 	gameNetwork.show( command [, params ] )
 
 ##### command ~^(required)^~
-_[String][api.type.String]._ String value as supported by the game network. See [Command&nbsp;Reference](#commands) below.
-
-##### params ~^(optional)^~
-_[Table][api.type.Table]._ Table of parameters allowed by the game network.
-
-* For Game Center, see [Parameter&nbsp;Reference](#params) below.
-
-
-<a id="commands">
-
-## Command Reference
-
-### Game Center
-
-For the `command` parameter, Game&nbsp;Center supports the following values:
+_[String][api.type.String]._ String value as supported by Game Center.
 
 * `"leaderboards"`
 * `"achievements"`
@@ -43,11 +29,11 @@ For the `command` parameter, Game&nbsp;Center supports the following values:
 * `"matches"`
 * `"createMatch"`
 
-<a id="params">
+##### params ~^(optional)^~
+_[Table][api.type.Table]._ Table of parameters allowed by Game Center — see the next section for details.
+
 
 ## Parameter Reference
-
-### Game Center
 
 Depending on the specified `command` parameter, the contents of the `params` table will vary.
 
@@ -111,7 +97,7 @@ gameNetwork.show( "matches", parameters )
 
 #### Create Match
 
-For the `command` parameter of `"createMatch"`, this function shows the Game Center match creation screen which allows players to manage their match ([reference](https://developer.apple.com/library/ios/documentation/GameKit/Reference/GKTurnBasedMatchmakerViewController_Ref/Reference/Reference.html)). The following keys listed below are accepted in the `params` table:
+For the `command` parameter of `"createMatch"`, this function shows the Game Center match creation screen which allows players to manage their match. The following keys listed below are accepted in the `params` table:
 
 * `playerIDs` — Optional array of strings representing the player IDs of people to invite to the match.
 
@@ -121,7 +107,7 @@ For the `command` parameter of `"createMatch"`, this function shows the Game Cen
 
 * `playerGroup` — The game type which will be created, for example a quick game or long game. Only players whose requests share the same `playerGroup` value are <nobr>auto-matched</nobr> by Game Center.
 
-* `playerAttributes` — Mask that specifies the role that the local player would like to play in the game. See the [Game&nbsp;Center&nbsp;Programming&nbsp;Guide](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/GameKit_Guide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008304) for more information.
+* `playerAttributes` — Mask that specifies the role that the local player would like to play in the game.
 
 * `inviteMessage` — Custom invitation message for the match.
 
@@ -140,8 +126,6 @@ gameNetwork.show( "createMatch", parameters )
 
 
 ## Example
-
-##### Game Center
 
 `````lua
 local function onGameNetworkPopupDismissed( event )

@@ -3,44 +3,30 @@
 
 > --------------------- ------------------------------------------------------------------------------------------
 > __Type__              [Function][api.type.Function]
-> __Library__           [gameNetwork.*][plugin.gamenetwork-apple]
+> __Library__           [gameNetwork.*][api.library.gameNetwork]
 > __Return value__      none
 > __Revision__          [REVISION_LABEL](REVISION_URL)
 > __Keywords__          gameNetwork, Game Center
-> __See also__          [gameNetwork.request()][plugin.gamenetwork-apple.request]
->								[gameNetwork.show()][plugin.gamenetwork-apple.gameNetwork.show]
+> __See also__          [gameNetwork.request()][plugin.gameNetwork-apple.request]
+>								[gameNetwork.show()][plugin.gameNetwork-apple.show]
 > --------------------- ------------------------------------------------------------------------------------------
 
 
 ## Overview
 
-Initializes an app for use with the game network provider.
+Initializes an app for use with Game Center.
 
 
 ## Syntax
 
-	gameNetwork.init( providerName [, ...] )
-
-##### providerName ~^(required)^~
-_[String][api.type.String]._ Name of the `gameNetwork` provider to initialize.
-
-* `"gamecenter"` &mdash; only available on iOS.
-
-
-## Providers
-
-### Game Center
-
-Game Center is a service provided by Apple and is only available on iOS.
-
     gameNetwork.init( "gamecenter" [, initCallback] )
 
 ##### initCallback ~^(optional)^~
-_[Listener][api.type.Listener]._ If `"gamecenter"` is specified as `providerName`, this is a callback function. On successful login, `event.data` will be `true`; if unsuccessful, `event.data` will be `false`. When problems such as network errors occur, `event.errorCode` ([integer][api.type.Number]) and `event.errorMessage` ([string][api.type.String]) will be defined.
+_[Listener][api.type.Listener]._ Callback function where, upon successful login, `event.data` will be `true`. If unsuccessful, `event.data` will be `false`. When problems such as network errors occur, `event.errorCode` ([integer][api.type.Number]) and `event.errorMessage` ([string][api.type.String]) will be defined.
 
 The `event.type` called `"showSignIn"` will be invoked before the Game Center login screen appears. This gives you a chance to pause your game or do any special actions you need before the login view takes over the screen. On successful login, `event.data` will return the login status (presumably `false`), so code which does not check for this type will still work. When this view is dismissed, the callback will be invoked again with `event.type` set to `"init"` to handle the results of the login. 
 
-Be aware that iOS backgrounding will cause your app to automatically log out the user from Game Center. When the app is resumed, Game Center will automatically try to <nobr>re-login</nobr> the user. The callback function you specified here will be invoked again, providing the result of that <nobr>re-login</nobr> attempt. As such, this callback function exists for the life of your application. With Game Center, it's advisable to avoid calling other Game Center functions when the user is not logged in.
+Be aware that iOS backgrounding will cause your app to automatically log out the user from Game Center. When the app is resumed, Game Center will automatically try to <nobr>re-login</nobr> the user. The callback function you specified here will be invoked again, providing the result of that <nobr>re-login</nobr> attempt. As such, this callback function exists for the life of your application. Note that other Game Center functions should not be called when the user is not logged in.
 
 <div class="guide-notebox-imp">
 <div class="notebox-title-imp">Important</div>
