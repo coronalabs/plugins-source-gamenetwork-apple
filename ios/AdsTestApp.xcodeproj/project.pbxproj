@@ -45,7 +45,6 @@
 		A498B81816D70EE80091A148 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A498B81716D70EE80091A148 /* CoronaResources.bundle */; };
 		A4E2537F166AE3DC00DCDC2C /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E2537E166AE3DC00DCDC2C /* Twitter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		A4E253E5166DE7E000DCDC2C /* libgameNetwork-apple.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libgameNetwork-apple.a */; };
-		A4F0615A16854336009C7C8F /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4F0615916854336009C7C8F /* FacebookSDK.framework */; };
 		F83D51181868C67B0062585E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F83D51171868C67A0062585E /* CoreVideo.framework */; };
 		F83D51191868C6810062585E /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484112315114F700074BD57 /* GLKit.framework */; };
 		F8D6D79E18D9087200216813 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8D6D79D18D9087200216813 /* CoreTelephony.framework */; };
@@ -113,7 +112,6 @@
 		A498B81716D70EE80091A148 /* CoronaResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = CoronaResources.bundle; path = CoronaEnterprise/Corona/ios/resource/CoronaResources.bundle; sourceTree = SOURCE_ROOT; };
 		A4E2537E166AE3DC00DCDC2C /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		A4E253DA166DE7C800DCDC2C /* Plugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Plugin.xcodeproj; sourceTree = "<group>"; };
-		A4F0615916854336009C7C8F /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = "CoronaEnterprise/Plugins/sdk-facebook/ios/FacebookSDK.framework"; sourceTree = "<group>"; };
 		F83D51171868C67A0062585E /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F8D6D79D18D9087200216813 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -123,9 +121,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F8D6D79E18D9087200216813 /* CoreTelephony.framework in Frameworks */,
 				F83D51191868C6810062585E /* GLKit.framework in Frameworks */,
 				F83D51181868C67B0062585E /* CoreVideo.framework in Frameworks */,
+				F8D6D79E18D9087200216813 /* CoreTelephony.framework in Frameworks */,
 				A489DE2B16854301007FB757 /* Accounts.framework in Frameworks */,
 				A489DE2C16854301007FB757 /* AdSupport.framework in Frameworks */,
 				A489DE2D16854301007FB757 /* Social.framework in Frameworks */,
@@ -157,7 +155,6 @@
 				A484111E15114F700074BD57 /* UIKit.framework in Frameworks */,
 				A447B67C16675195009EA762 /* libplayer.a in Frameworks */,
 				A4E253E5166DE7E000DCDC2C /* libgameNetwork-apple.a in Frameworks */,
-				A4F0615A16854336009C7C8F /* FacebookSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,7 +215,6 @@
 				A489DE2816854301007FB757 /* Accounts.framework */,
 				A489DE2916854301007FB757 /* AdSupport.framework */,
 				A489DE2A16854301007FB757 /* Social.framework */,
-				A4F0615916854336009C7C8F /* FacebookSDK.framework */,
 				A484116315128D5C0074BD57 /* AddressBook.framework */,
 				A484116415128D5C0074BD57 /* AddressBookUI.framework */,
 				A484116515128D5C0074BD57 /* AudioToolbox.framework */,
