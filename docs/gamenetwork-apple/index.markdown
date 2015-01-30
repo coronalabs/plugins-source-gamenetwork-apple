@@ -17,6 +17,10 @@
 
 Game Center is not supported in the Corona Simulator.
 
+## Syntax
+
+	local gameNetwork = require( "gameNetwork" )
+
 ## Functions
 
 #### [gameNetwork.init()][plugin.gameNetwork-apple.init]
