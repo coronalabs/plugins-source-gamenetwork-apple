@@ -45,6 +45,10 @@
 		A498B81816D70EE80091A148 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A498B81716D70EE80091A148 /* CoronaResources.bundle */; };
 		A4E2537F166AE3DC00DCDC2C /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E2537E166AE3DC00DCDC2C /* Twitter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		A4E253E5166DE7E000DCDC2C /* libgameNetwork-apple.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libgameNetwork-apple.a */; };
+		AAFFBFB923E020E5004C0446 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAFFBFB823E020E5004C0446 /* CoreText.framework */; };
+		AAFFBFBB23E020F1004C0446 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAFFBFBA23E020F1004C0446 /* AssetsLibrary.framework */; };
+		AAFFBFBD23E020FA004C0446 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAFFBFBC23E020FA004C0446 /* Photos.framework */; };
+		AAFFBFBF23E022C3004C0446 /* _CoronaSplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = AAFFBFBE23E022C3004C0446 /* _CoronaSplashScreen.png */; };
 		F83D51181868C67B0062585E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F83D51171868C67A0062585E /* CoreVideo.framework */; };
 		F83D51191868C6810062585E /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484112315114F700074BD57 /* GLKit.framework */; };
 		F8D6D79E18D9087200216813 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8D6D79D18D9087200216813 /* CoreTelephony.framework */; };
@@ -112,6 +116,10 @@
 		A498B81716D70EE80091A148 /* CoronaResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = CoronaResources.bundle; path = CoronaEnterprise/Corona/ios/resource/CoronaResources.bundle; sourceTree = SOURCE_ROOT; };
 		A4E2537E166AE3DC00DCDC2C /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		A4E253DA166DE7C800DCDC2C /* Plugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Plugin.xcodeproj; sourceTree = "<group>"; };
+		AAFFBFB823E020E5004C0446 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		AAFFBFBA23E020F1004C0446 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		AAFFBFBC23E020FA004C0446 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
+		AAFFBFBE23E022C3004C0446 /* _CoronaSplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = _CoronaSplashScreen.png; path = "CoronaEnterprise/Project Template/App/ios/_CoronaSplashScreen.png"; sourceTree = SOURCE_ROOT; };
 		F83D51171868C67A0062585E /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F8D6D79D18D9087200216813 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -136,9 +144,11 @@
 				A484117C15128D5D0074BD57 /* CoreLocation.framework in Frameworks */,
 				A484117D15128D5D0074BD57 /* CoreMedia.framework in Frameworks */,
 				A484117E15128D5D0074BD57 /* CoreMotion.framework in Frameworks */,
+				AAFFBFBB23E020F1004C0446 /* AssetsLibrary.framework in Frameworks */,
 				A484112015114F700074BD57 /* Foundation.framework in Frameworks */,
 				A484117F15128D5D0074BD57 /* GameKit.framework in Frameworks */,
 				A484118015128D5D0074BD57 /* ImageIO.framework in Frameworks */,
+				AAFFBFBD23E020FA004C0446 /* Photos.framework in Frameworks */,
 				A484118115128D5D0074BD57 /* libobjc.dylib in Frameworks */,
 				A48411CA15129F610074BD57 /* libsqlite3.dylib in Frameworks */,
 				A484118215128D5D0074BD57 /* MapKit.framework in Frameworks */,
@@ -153,6 +163,7 @@
 				A484118A15128D5D0074BD57 /* SystemConfiguration.framework in Frameworks */,
 				A4E2537F166AE3DC00DCDC2C /* Twitter.framework in Frameworks */,
 				A484111E15114F700074BD57 /* UIKit.framework in Frameworks */,
+				AAFFBFB923E020E5004C0446 /* CoreText.framework in Frameworks */,
 				A447B67C16675195009EA762 /* libplayer.a in Frameworks */,
 				A4E253E5166DE7E000DCDC2C /* libgameNetwork-apple.a in Frameworks */,
 			);
@@ -210,6 +221,9 @@
 		A484111C15114F700074BD57 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AAFFBFBC23E020FA004C0446 /* Photos.framework */,
+				AAFFBFBA23E020F1004C0446 /* AssetsLibrary.framework */,
+				AAFFBFB823E020E5004C0446 /* CoreText.framework */,
 				F8D6D79D18D9087200216813 /* CoreTelephony.framework */,
 				F83D51171868C67A0062585E /* CoreVideo.framework */,
 				A489DE2816854301007FB757 /* Accounts.framework */,
@@ -249,6 +263,7 @@
 		A484112715114F700074BD57 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				AAFFBFBE23E022C3004C0446 /* _CoronaSplashScreen.png */,
 				A484112915114F700074BD57 /* App-Info.plist */,
 				A484112A15114F700074BD57 /* InfoPlist.strings */,
 				A484112D15114F700074BD57 /* main.mm */,
@@ -360,6 +375,7 @@
 				A447B6671666FD02009EA762 /* MainWindow-iPad.xib in Resources */,
 				A447B6681666FD02009EA762 /* MainWindow.xib in Resources */,
 				A447B66A1666FD43009EA762 /* CoronaSDK3rdPartyLicenses.txt in Resources */,
+				AAFFBFBF23E022C3004C0446 /* _CoronaSplashScreen.png in Resources */,
 				A498B81816D70EE80091A148 /* CoronaResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -477,7 +493,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/CoronaEnterprise/Corona/shared/include/Corona ${SRCROOT}/CoronaEnterprise/Corona/shared/include/lua ${SRCROOT}/CoronaEnterprise/Corona/ios/include/Corona";
@@ -495,7 +511,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -514,6 +530,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/CoronaEnterprise/Plugins/sdk-facebook/ios\"",
 				);
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
@@ -544,6 +561,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/CoronaEnterprise/Plugins/sdk-facebook/ios\"",
 				);
+				ENABLE_BITCODE = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
