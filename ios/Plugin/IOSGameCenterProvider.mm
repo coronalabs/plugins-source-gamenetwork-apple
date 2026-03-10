@@ -49,10 +49,26 @@ IOSGameCenterProvider::Open( lua_State *L )
 	void *platformContext = CoronaLuaGetContext( L ); // lua_touserdata( L, lua_upvalueindex( 1 ) );
 	id<CoronaRuntime> runtime = (id<CoronaRuntime>)platformContext;
 
-	const char *name = lua_tostring( L, 1 ); CORONA_ASSERT( 0 == strcmp( name, kName ) );
-	int result = CoronaLibraryProviderNew( L, "gameNetwork", name, kPublisherId );
+	const char *name = lua_tostring( L, 1 );
 
-	if ( result )
+	// Call CoronaLibraryProviderNew for any internal side-effect setup,
+	// but its pushed table may differ from the actual package.loaded table
+	// when gameNetwork is loaded from a Lua module rather than the engine.
+	int providerResult = CoronaLibraryProviderNew( L, "gameNetwork", name, kPublisherId );
+	if ( providerResult )
+	{
+		lua_pop( L, providerResult ); // pop whatever CoronaLibraryProviderNew pushed
+	}
+
+	// Always register into the actual package.loaded["gameNetwork"] table,
+	// which is the table that Lua code holds a reference to.
+	lua_getglobal( L, "package" );
+	lua_getfield( L, -1, "loaded" );
+	lua_getfield( L, -1, "gameNetwork" );
+	lua_remove( L, -2 ); // remove package.loaded
+	lua_remove( L, -2 ); // remove package
+
+	if ( lua_istable( L, -1 ) )
 	{
 		const luaL_Reg kFunctions[] =
 		{
@@ -69,9 +85,13 @@ IOSGameCenterProvider::Open( lua_State *L )
 		Self *provider = new Self( runtime );
 		CoronaLuaPushUserdata( L, provider, kName );
 		luaL_openlib( L, NULL, kFunctions, 1 );
+		return 1;
 	}
-
-	return result;
+	else
+	{
+		lua_pop( L, 1 );
+		return 0;
+	}
 }
 
 int
@@ -93,8 +113,6 @@ int
 IOSGameCenterProvider::Init( lua_State *L )
 {
 	Self *provider = GetSelf( L );
-
-	CORONA_ASSERT( 0 == strcmp( kProviderName == lua_tostring( L, 1 ) ) );
 
 	bool success = provider->GetGameCenter()->Init( L, 2 );
 	lua_pushboolean( L, success );

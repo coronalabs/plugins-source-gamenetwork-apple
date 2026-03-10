@@ -3,8 +3,8 @@ local metadata =
 	plugin =
 	{
 		format = 'staticLibrary',
-		staticLibs = { 'gamenetwork-apple' },
-		frameworks = { ''},
+		staticLibs = { 'gameNetwork-apple', },
+		frameworks = { 'GameKit', },
 		frameworksOptional = {},
 	},
 }

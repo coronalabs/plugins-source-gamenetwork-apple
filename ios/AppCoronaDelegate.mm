@@ -2,13 +2,13 @@
 //  AppCoronaDelegate.mm
 //  TemplateApp
 //
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2017 __MyCompanyName__. All rights reserved.
 //
 
 #import "AppCoronaDelegate.h"
 
-#import "CoronaRuntime.h"
-#import "CoronaLua.h"
+#import <CoronaRuntime.h>
+#import <CoronaLua.h>
 
 @implementation AppCoronaDelegate
 

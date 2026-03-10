@@ -1,10 +1,10 @@
 //
 //  main.mm
 //
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2017 __MyCompanyName__. All rights reserved.
 //
 
-#import "CoronaApplicationMain.h"
+#import <CoronaApplicationMain.h>
 
 #import "AppCoronaDelegate.h"
 

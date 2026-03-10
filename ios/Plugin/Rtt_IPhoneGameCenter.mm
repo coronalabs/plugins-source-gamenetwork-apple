@@ -99,11 +99,15 @@ static  __attribute__((ns_returns_autoreleased)) NSDictionary* GameCenter_NSDict
 	
 	// Using setValue instead of setObject to avoid problems with nil values.
 	NSMutableDictionary* dictionary = [NSMutableDictionary dictionaryWithCapacity:9];
-	[dictionary setValue:[score category] forKey:@"category"];
+	if ( [score respondsToSelector:@selector(leaderboardIdentifier)] )
+	{
+		[dictionary setValue:[score leaderboardIdentifier] forKey:@"category"];
+		[dictionary setValue:[score leaderboardIdentifier] forKey:@"leaderboardIdentifier"];
+	}
 	[dictionary setValue:[NSNumber numberWithDouble:[score value]] forKey:@"value"];
 	[dictionary setValue:[[score date] descriptionWithLocale:[NSLocale currentLocale]] forKey:@"date"];
 	[dictionary setValue:[score formattedValue] forKey:@"formattedValue"];
-	[dictionary setValue:[score playerID] forKey:@"playerID"];
+	[dictionary setValue:[[score player] playerID] forKey:@"playerID"];
 	[dictionary setValue:[NSNumber numberWithInteger:[score rank]] forKey:@"rank"];
 	
 	// Special case for context which is iOS 5+ only.
@@ -145,7 +149,7 @@ static  __attribute__((ns_returns_autoreleased)) GKScore* GameCenter_GKScoreFrom
 		NSLog(@"Error: gameNetwork/Game Center score must have a string for the key 'category'\n");
 		return nil;
 	}
-	GKScore* score = [[[GKScore alloc] initWithCategory:[NSString stringWithUTF8String:lua_tostring( L, -1 )]] autorelease];
+	GKScore* score = [[[GKScore alloc] initWithLeaderboardIdentifier:[NSString stringWithUTF8String:lua_tostring( L, -1 )]] autorelease];
 	lua_pop( L, 1 );
 	
 	
@@ -319,7 +323,9 @@ static  __attribute__((ns_returns_autoreleased)) GKLeaderboard* GameCenter_GKLea
 				}
 				lua_pop( L, 1 ); // pop array[i] off the top of the stack. array is now on top of stack again.
 			}
-			leaderboard = [[[GKLeaderboard alloc] initWithPlayerIDs:playerids] autorelease];
+			// Note: initWithPlayerIDs: is deprecated (iOS 8). Using init instead.
+		// Player-scoped filtering should use the loadEntries APIs on iOS 14+.
+		leaderboard = [[[GKLeaderboard alloc] init] autorelease];
 		}
 	}
 	else
@@ -334,12 +340,22 @@ static  __attribute__((ns_returns_autoreleased)) GKLeaderboard* GameCenter_GKLea
 	lua_getfield( L, index, "category" );
 	if ( lua_type( L, -1 ) == LUA_TSTRING )
 	{
-		[leaderboard setCategory:[NSString stringWithUTF8String:lua_tostring( L, -1 )]];
+		NSString* categoryStr = [NSString stringWithUTF8String:lua_tostring( L, -1 )];
+		// leaderboardIdentifier was removed from GKLeaderboard in iOS 26.
+		// Use respondsToSelector: to avoid crash on newer iOS.
+		if ( [leaderboard respondsToSelector:@selector(setLeaderboardIdentifier:)] )
+		{
+			[leaderboard performSelector:@selector(setLeaderboardIdentifier:) withObject:categoryStr];
+		}
+		else
+		{
+			NSLog(@"Warning: GKLeaderboard no longer supports setLeaderboardIdentifier:. Use loadLeaderboardsWithIDs: API instead.");
+		}
 	}
 	lua_pop( L, 1 );
-	
-	
-	
+
+
+
 	lua_getfield( L, index, "playerScope" );
 	// Apple uses numbers here, but we're using strings.
 	if ( lua_type( L, -1 ) == LUA_TSTRING )
@@ -412,24 +428,25 @@ static  __attribute__((ns_returns_autoreleased)) GKLeaderboard* GameCenter_GKLea
 }
 
 
-static  __attribute__((ns_returns_autoreleased)) GKLeaderboardViewController* GameCenter_GKLeaderboardViewControllerFromLuaTable( lua_State* L, int index )
+static  __attribute__((ns_returns_autoreleased)) GKGameCenterViewController* GameCenter_GKGameCenterViewControllerForLeaderboardFromLuaTable( lua_State* L, int index )
 {
-	// Since there are no required values for a GKLeaderboardViewController, we can return a default object if there is no Lua table
-	GKLeaderboardViewController* leaderboard = [[[GKLeaderboardViewController alloc] init] autorelease];
-	
+	// Since there are no required values, we can return a default object if there is no Lua table
+	GKGameCenterViewController* controller = [[[GKGameCenterViewController alloc] init] autorelease];
+	controller.viewState = GKGameCenterViewControllerStateLeaderboards;
+
 	if ( lua_type( L, index ) != LUA_TTABLE )
 	{
-		return leaderboard;
+		return controller;
 	}
-	
+
 	lua_getfield( L, index, "category" );
 	if ( lua_type( L, -1 ) == LUA_TSTRING )
 	{
-		[leaderboard setCategory:[NSString stringWithUTF8String:lua_tostring( L, -1 )]];
+		[controller setLeaderboardIdentifier:[NSString stringWithUTF8String:lua_tostring( L, -1 )]];
 	}
 	lua_pop( L, 1 );
-	
-	
+
+
 	lua_getfield( L, index, "timeScope" );
 	// Apple uses numbers here, but we're using strings.
 	if ( lua_type( L, -1 ) == LUA_TSTRING )
@@ -437,15 +454,15 @@ static  __attribute__((ns_returns_autoreleased)) GKLeaderboardViewController* Ga
 		const char* scopestring = lua_tostring(L, -1);
 		if ( 0 == strcasecmp(Rtt::IPhoneGameCenter::kValueTimeScopeAllTime, scopestring) )
 		{
-			[leaderboard setTimeScope:GKLeaderboardTimeScopeAllTime];
+			[controller setLeaderboardTimeScope:GKLeaderboardTimeScopeAllTime];
 		}
 		else if ( 0 == strcasecmp(Rtt::IPhoneGameCenter::kValueTimeScopeWeek, scopestring) )
 		{
-			[leaderboard setTimeScope:GKLeaderboardTimeScopeWeek];
+			[controller setLeaderboardTimeScope:GKLeaderboardTimeScopeWeek];
 		}
 		else if ( 0 == strcasecmp(Rtt::IPhoneGameCenter::kValueTimeScopeToday, scopestring) )
 		{
-			[leaderboard setTimeScope:GKLeaderboardTimeScopeToday];
+			[controller setLeaderboardTimeScope:GKLeaderboardTimeScopeToday];
 		}
 		else
 		{
@@ -453,8 +470,8 @@ static  __attribute__((ns_returns_autoreleased)) GKLeaderboardViewController* Ga
 		}
 	}
 	lua_pop( L, 1 );
-	
-	return leaderboard;
+
+	return controller;
 }
 
 
@@ -537,38 +554,66 @@ static  __attribute__((ns_returns_autoreleased)) NSArray* GameCenter_NSArrayOfSt
 
 static  __attribute__((ns_returns_autoreleased)) NSDictionary* GameCenter_NSDictionaryFromGKLocalPlayer( GKLocalPlayer* player )
 {
-	// Not using dictionaryWithObjectsAndKeys because of nil value paranoia due to 4.3 bug with fields returning nil.
-	NSMutableDictionary* dictionary = [NSMutableDictionary dictionaryWithCapacity:6];
+	NSMutableDictionary* dictionary = [NSMutableDictionary dictionaryWithCapacity:5];
 	[dictionary setValue:[player alias] forKey:@"alias"];
-	[dictionary setValue:[player playerID] forKey:@"playerID"];
-	[dictionary setValue:[NSNumber numberWithBool:[player isFriend]] forKey:@"isFriend"];
+	// Use gamePlayerID when available (iOS 12.4+), fall back to playerID
+	if ( @available(iOS 12.4, *) )
+	{
+		[dictionary setValue:[player gamePlayerID] forKey:@"playerID"];
+	}
+	else
+	{
+		[dictionary setValue:[player playerID] forKey:@"playerID"];
+	}
 	[dictionary setValue:[NSNumber numberWithBool:[player isAuthenticated]] forKey:@"isAuthenticated"];
 	[dictionary setValue:[NSNumber numberWithBool:[player isUnderage]] forKey:@"isUnderage"];
-	[dictionary setValue:[player friends] forKey:@"friends"];
-	
+	// Note: isFriend and friends properties were removed in modern GameKit.
+	// Use loadFriendsWithCompletionHandler: for friend data.
+
 	return dictionary;
 }
 
 static  __attribute__((ns_returns_autoreleased)) NSDictionary* GameCenter_NSDictionaryFromGKPlayer( GKPlayer* player )
 {
-	if ( [[player playerID] isEqualToString:[[GKLocalPlayer localPlayer] playerID]] )
+	NSString* playerID = nil;
+	if ( @available(iOS 12.4, *) )
+	{
+		playerID = [player gamePlayerID];
+	}
+	else
+	{
+		playerID = [player playerID];
+	}
+
+	if ( [player isEqual:[GKLocalPlayer localPlayer]] )
 	{
 		return GameCenter_NSDictionaryFromGKLocalPlayer([GKLocalPlayer localPlayer]);
 	}
-	
-	// Not using dictionaryWithObjectsAndKeys because of nil value paranoia due to 4.3 bug with fields returning nil.
-	NSMutableDictionary* dictionary = [NSMutableDictionary dictionaryWithCapacity:3];
+
+	NSMutableDictionary* dictionary = [NSMutableDictionary dictionaryWithCapacity:2];
 	[dictionary setValue:[player alias] forKey:@"alias"];
-	[dictionary setValue:[player playerID] forKey:@"playerID"];
-	[dictionary setValue:[NSNumber numberWithBool:[player isFriend]] forKey:@"isFriend"];
-	
+	[dictionary setValue:playerID forKey:@"playerID"];
+
 	return dictionary;
 }
 
 static  __attribute__((ns_returns_autoreleased)) NSMutableDictionary* GameCenter_NSDictionaryFromGKTurnBasedParticipant( GKTurnBasedParticipant* participant )
 {
 	NSMutableDictionary* dictionary = [NSMutableDictionary dictionaryWithCapacity:3];
-	[dictionary setValue:[participant playerID] forKey:@"playerID"];
+	GKPlayer* participantPlayer = [participant player];
+	NSString* participantPlayerID = nil;
+	if ( participantPlayer )
+	{
+		if ( @available(iOS 12.4, *) )
+		{
+			participantPlayerID = [participantPlayer gamePlayerID];
+		}
+		else
+		{
+			participantPlayerID = [participantPlayer playerID];
+		}
+	}
+	[dictionary setValue:participantPlayerID forKey:@"playerID"];
 	[dictionary setValue:Rtt::IPhoneGameCenter::nsstringFromOutcome([participant matchOutcome]) forKey:@"outcome"];
 	[dictionary setValue:Rtt::IPhoneGameCenter::nsstringFromStatus([participant status]) forKey:@"status"];
 	return dictionary;
@@ -705,57 +750,41 @@ static  __attribute__((ns_returns_autoreleased)) GKMatchRequest* GameCenter_GKMa
 	[super dealloc];
 }
 
-- (void) leaderboardViewControllerDidFinish:(GKLeaderboardViewController*)viewcontroller
+- (void)gameCenterViewControllerDidFinish:(GKGameCenterViewController*)viewcontroller
 {
 	using namespace Rtt;
 	[viewcontroller dismissViewControllerAnimated:YES completion:NULL];
-	
+
+	// Determine which dashboard type was being shown and dispatch the appropriate event
 	if ( [self luaResourceForLeaderboard] )
 	{
 		IPhoneGameCenterEvent e( IPhoneGameCenter::kDashboardLeaderboards, nil, nil );
 		e.Push([[self runtime] L]);
 		CoronaLuaDispatchEvent([[self runtime] L], luaResourceForLeaderboard, 0);
-	}
-	
-	CoronaLuaDeleteRef([[self runtime] L], [self luaResourceForLeaderboard]);
-	// set to nil to avoid double delete in dealloc
-	[self setLuaResourceForLeaderboard:nil];
-}
 
-- (void)achievementViewControllerDidFinish:(GKAchievementViewController*)viewcontroller;
-{
-	using namespace Rtt;
-	[viewcontroller dismissViewControllerAnimated:YES completion:NULL];
-	
+		CoronaLuaDeleteRef([[self runtime] L], [self luaResourceForLeaderboard]);
+		[self setLuaResourceForLeaderboard:nil];
+	}
+
 	if ( [self luaResourceForAchievement] )
 	{
 		IPhoneGameCenterEvent e( IPhoneGameCenter::kDashboardAchievements, nil, nil );
 		e.Push([[self runtime] L]);
 		CoronaLuaDispatchEvent([[self runtime] L], luaResourceForAchievement, 0);
-	}
-	
-	CoronaLuaDeleteRef([[self runtime] L], [self luaResourceForAchievement]);
-	// set to nil to avoid double delete in dealloc
-	[self setLuaResourceForAchievement:nil];
-	
-}
 
-- (void)friendRequestComposeViewControllerDidFinish:(GKFriendRequestComposeViewController*)viewcontroller;
-{
-	using namespace Rtt;
-	[viewcontroller dismissViewControllerAnimated:YES completion:NULL];
-	
+		CoronaLuaDeleteRef([[self runtime] L], [self luaResourceForAchievement]);
+		[self setLuaResourceForAchievement:nil];
+	}
+
 	if ( [self luaResourceForFriendRequest] )
 	{
 		IPhoneGameCenterEvent e( IPhoneGameCenter::kDashboardFriendRequest, nil, nil );
 		e.Push([[self runtime] L]);
 		CoronaLuaDispatchEvent([[self runtime] L], luaResourceForFriendRequest, 0);
+
+		CoronaLuaDeleteRef([[self runtime] L], [self luaResourceForFriendRequest]);
+		[self setLuaResourceForFriendRequest:nil];
 	}
-	
-	CoronaLuaDeleteRef([[self runtime] L], [self luaResourceForFriendRequest]);
-	// set to nil to avoid double delete in dealloc
-	[self setLuaResourceForFriendRequest:nil];
-	
 }
 
 
@@ -840,18 +869,35 @@ static  __attribute__((ns_returns_autoreleased)) GKMatchRequest* GameCenter_GKMa
 	[super dealloc];
 }
 
-- (void)handleInviteFromGameCenter:(NSArray *) playersToInvite;
+// GKLocalPlayerListener / GKTurnBasedEventListener methods (replaces deprecated GKTurnBasedEventHandlerDelegate)
+
+- (void)player:(GKPlayer *)player didRequestMatchWithRecipients:(NSArray<GKPlayer *> *)recipientPlayers
 {
 	using namespace Rtt;
 	if ( [self luaResourceForEventHandler] )
 	{
-		IPhoneGameCenterEvent e( IPhoneGameCenter::kValueInvitationReceived, nil, playersToInvite );
+		// Convert GKPlayer array to player ID strings for backward compatibility
+		NSMutableArray* playerIDs = [NSMutableArray arrayWithCapacity:[recipientPlayers count]];
+		for (GKPlayer* recipient in recipientPlayers)
+		{
+			NSString* pid = nil;
+			if (@available(iOS 12.4, *))
+			{
+				pid = [recipient gamePlayerID];
+			}
+			else
+			{
+				pid = [recipient playerID];
+			}
+			if (pid) [playerIDs addObject:pid];
+		}
+		IPhoneGameCenterEvent e( IPhoneGameCenter::kValueInvitationReceived, nil, playerIDs );
 		e.Push([[self runtime] L]);
 		CoronaLuaDispatchEvent([[self runtime] L], luaResourceForEventHandler, 0);
 	}
 }
 
-- (void)handleMatchEnded:(GKTurnBasedMatch *) match;
+- (void)player:(GKPlayer *)player matchEnded:(GKTurnBasedMatch *)match
 {
 	using namespace Rtt;
 	if ( [self luaResourceForEventHandler] )
@@ -862,32 +908,15 @@ static  __attribute__((ns_returns_autoreleased)) GKMatchRequest* GameCenter_GKMa
 	}
 }
 
-- (void)handleTurnEventForMatch:(GKTurnBasedMatch *) match;
+- (void)player:(GKPlayer *)player receivedTurnEventForMatch:(GKTurnBasedMatch *)match didBecomeActive:(BOOL)didBecomeActive
 {
 	using namespace Rtt;
-	
-	if ( match )
-	{
-		[fMatchesDictionary setValue:match forKey:[match matchID]];
-	}
-	
-	if ( [self luaResourceForEventHandler] )
-	{
-		IPhoneGameCenterEvent e( IPhoneGameCenter::kValuePlayerTurn, nil, GameCenter_NSDictionaryFromGKTurnBasedMatch(match) );
-		e.Push([[self runtime] L]);
-		CoronaLuaDispatchEvent([[self runtime] L], luaResourceForEventHandler, 0);
-	}
-}
 
-- (void)handleTurnEventForMatch:(GKTurnBasedMatch *) match didBecomeActive:(BOOL)didBecomeActive;
-{
-	using namespace Rtt;
-	
 	if ( match )
 	{
 		[fMatchesDictionary setValue:match forKey:[match matchID]];
 	}
-	
+
 	if ( [self luaResourceForEventHandler] )
 	{
 		IPhoneGameCenterEvent e( IPhoneGameCenter::kValuePlayerTurn, nil, GameCenter_NSDictionaryFromGKTurnBasedMatch(match) );
@@ -987,11 +1016,11 @@ IPhoneGameCenter::Authenticate( lua_State *L )
 		return;
 	}
 	GKLocalPlayer* localplayer = [GKLocalPlayer localPlayer];
-	
+
 	[localplayer setAuthenticateHandler:^(UIViewController* viewcontroller, NSError* error)
 	 {
 		// Implementation detail, the type of viewcontroller is private GKHostedAuthenticateViewController.
-		 
+
 		// Apple's GKTapper example warns that GameKit may not perform on the main thread.
 		dispatch_async(dispatch_get_main_queue(), ^(void)
 		{
@@ -1041,11 +1070,6 @@ IPhoneGameCenter::Authenticate( lua_State *L )
 bool
 IPhoneGameCenter::Init( lua_State *L, int index )
 {
-	// There are two ways we can do this.
-	// We can allow init to be called only once and short circuit.
-	// Or we can allow it to be called multiple times to allow users to change the callback.
-	// Apple's auto-relogin after resume implies they only expect authenticateWithCompletionHandler to be called once.
-	// However, all the stuff about the user being able to sign out while backgrounded suggests maybe not.
 	if ( ! fIsInitialized )
 	{
 		if ( CoronaLuaIsListener( L, index, IPhoneGameCenterEvent::kName ) )
@@ -1075,7 +1099,7 @@ IPhoneGameCenter::Init( lua_State *L, int index )
 		fTurnBasedMatchMakerDelegate.runtime = fRuntime;
 		fTurnBasedEventHandlerDelegate = [[TurnBasedEventHandlerDelegate alloc] init];
 		fTurnBasedEventHandlerDelegate.runtime = fRuntime;
-		[GKTurnBasedEventHandler sharedTurnBasedEventHandler].delegate = fTurnBasedEventHandlerDelegate;
+		[[GKLocalPlayer localPlayer] registerListener:fTurnBasedEventHandlerDelegate];
 		
 		// This is used to store matches so that we can leave them
 		fMatchesDictionary = [[NSMutableDictionary alloc] init];
@@ -1128,33 +1152,31 @@ IPhoneGameCenter::Show( lua_State* L )
 		resource = CoronaLuaNewRef([fRuntime L], 3);
 	}
 	
-	//	gameNetwork.s-how( "leaderboards", { leaderboard = {category="com.appledts.GKTapper.aggregate", timeScope="Week"}, listener=dismissCallback } )
+	//	gameNetwork.show( "leaderboards", { leaderboard = {category="com.appledts.GKTapper.aggregate", timeScope="Week"}, listener=dismissCallback } )
 	if ( 0 == strcasecmp( IPhoneGameCenter::kDashboardLeaderboards, name ) )
 	{
-		GKLeaderboardViewController* leaderboardcontroller = nil;
+		GKGameCenterViewController* leaderboardcontroller = nil;
 		if( ( lua_type( L, 2 ) == LUA_TTABLE ) ) // look for the leaderboard inside the table
 		{
-			// Even though this is a GKLeaderboardViewController and not a GKLeaderboard,
-			// the properties we care about are identical so to not overwhelm our users,
-			// we will reuse the key name 'leaderboard'.
 			lua_getfield( L, 2, "leaderboard" );
-			// GameCenter_GKLeaderboardFromLuaTable convenience API will do checking
-			leaderboardcontroller = GameCenter_GKLeaderboardViewControllerFromLuaTable( L, -1 );
+			leaderboardcontroller = GameCenter_GKGameCenterViewControllerForLeaderboardFromLuaTable( L, -1 );
 			lua_pop( L, 1 );
 		}
 		else if( ( lua_type( L, 2 ) == LUA_TSTRING ) )
 		{
-			leaderboardcontroller = [[[GKLeaderboardViewController alloc] init] autorelease];
-			[leaderboardcontroller setCategory:[NSString stringWithUTF8String:lua_tostring( L, 2 )]];
+			leaderboardcontroller = [[[GKGameCenterViewController alloc] init] autorelease];
+			leaderboardcontroller.viewState = GKGameCenterViewControllerStateLeaderboards;
+			[leaderboardcontroller setLeaderboardIdentifier:[NSString stringWithUTF8String:lua_tostring( L, 2 )]];
 		}
 		else
 		{
-			leaderboardcontroller = [[[GKLeaderboardViewController alloc] init] autorelease];
+			leaderboardcontroller = [[[GKGameCenterViewController alloc] init] autorelease];
+			leaderboardcontroller.viewState = GKGameCenterViewControllerStateLeaderboards;
 		}
-		
+
 		[fGameCenterDelegate setLuaResourceForLeaderboard:resource];
-		
-		leaderboardcontroller.leaderboardDelegate = fGameCenterDelegate;
+
+		leaderboardcontroller.gameCenterDelegate = fGameCenterDelegate;
 		[viewcontroller presentViewController:leaderboardcontroller animated:YES completion:NULL];
 	}
 	
@@ -1163,60 +1185,41 @@ IPhoneGameCenter::Show( lua_State* L )
 	// gameNetwork.show( "achievements", { listener = dismissCallback } )
 	else if ( 0 == strcasecmp( IPhoneGameCenter::kDashboardAchievements, name ) )
 	{
-		GKAchievementViewController* achievementcontroller = [[[GKAchievementViewController alloc] init] autorelease];
-		
+		GKGameCenterViewController* achievementcontroller = [[[GKGameCenterViewController alloc] init] autorelease];
+		achievementcontroller.viewState = GKGameCenterViewControllerStateAchievements;
+
 		[fGameCenterDelegate setLuaResourceForAchievement:resource];
-		achievementcontroller.achievementDelegate = fGameCenterDelegate;
-		
+		achievementcontroller.gameCenterDelegate = fGameCenterDelegate;
+
 		[viewcontroller presentViewController:achievementcontroller animated:YES completion:NULL];
 	}
 	// gameNetwork.show( "friendRequest" )
-	// or
-	//	gameNetwork.show( "friendRequest", { message="By my friend please",  playerIDs={ "G:194669300", "G:1435127232", "G:1187401733" }, listener=requestCallback} )
-	// or gameNetwork.show( "friendRequest", { message="By my friend please", emailAddresses={ "me@me.com", "you@you.com" },  listener=requestCallback} )
-	// Array must not be longer than max limit specified by OS or it throws an exception.
-	// fetchFriendRequestMaxNumberOfRecipients will return this value.
-	// TODO: Truncate the array so we don't exceed the limits. Should take into account combined email+playerids if we get around crashing bug.
+	// Note: GKFriendRequestComposeViewController was removed from GameKit.
+	// Friend requests are no longer supported through the Game Center API.
 	else if ( 0 == strcasecmp( IPhoneGameCenter::kDashboardFriendRequest, name ) )
 	{
-		GKFriendRequestComposeViewController* friendrequestcontroller = [[[GKFriendRequestComposeViewController alloc] init] autorelease];
-		/*
-		 [friendrequestcontroller addRecipientsWithEmailAddresses:[NSArray arrayWithObjects:@"me@me.com", @"you@you.com", nil]];
-		 [friendrequestcontroller addRecipientsWithPlayerIDs:[NSArray arrayWithObjects:@"G:194669300", @"G:1435127232", @"G:1187401733", nil]];
-		 */
-		// Seem to be trashing memory when I try setting both the addRecipientsWithEmailAddresses and addRecipientsWithPlayerIDs.
-		if( ( lua_type( L, 2 ) == LUA_TTABLE ) ) // look for the options inside the table
+		NSLog(@"WARNING: gameNetwork.show('friendRequest') is no longer supported. GKFriendRequestComposeViewController was removed from GameKit.\n");
+
+		// Still fire the callback so the Lua code doesn't hang waiting
+		if ( resource )
 		{
-			lua_getfield( L, 2, "playerIDs" );
-			if ( lua_type( L, -1 ) == LUA_TTABLE )
+			[fGameCenterDelegate setLuaResourceForFriendRequest:resource];
+
+			dispatch_async(dispatch_get_main_queue(), ^(void)
 			{
-				NSArray* array = GameCenter_NSArrayOfStringsFromLuaTable( L, -1 );
-				[friendrequestcontroller addRecipientsWithPlayerIDs:array];
-			}
-			lua_pop( L, 1 );
-			
-			lua_getfield( L, 2, "emailAddresses" );
-			if ( lua_type( L, -1 ) == LUA_TTABLE )
-			{
-				NSArray* array = GameCenter_NSArrayOfStringsFromLuaTable( L, -1 );
-				[friendrequestcontroller addRecipientsWithEmailAddresses:array];
-				
-			}
-			lua_pop( L, 1 );
-			
-			lua_getfield( L, 2, "message" );
-			if ( lua_type( L, -1 ) == LUA_TSTRING )
-			{
-				[friendrequestcontroller setMessage:[NSString stringWithUTF8String:lua_tostring( L, -1 )]];
-			}
-			lua_pop( L, 1 );
-			
+				using namespace Rtt;
+				NSMutableDictionary* errordetail = [NSMutableDictionary dictionary];
+				[errordetail setValue:NSLocalizedString(@"Friend requests are no longer supported by Game Center.", @"Friend requests are no longer supported by Game Center.") forKey:NSLocalizedDescriptionKey];
+				NSError* error = [NSError errorWithDomain:@"com.ansca.corona.gamenetwork.gamecenter" code:3 userInfo:errordetail];
+
+				IPhoneGameCenterEvent e( IPhoneGameCenter::kDashboardFriendRequest, error, nil );
+				e.Push([fRuntime L]);
+				CoronaLuaDispatchEvent([fRuntime L], resource, 0);
+
+				CoronaLuaDeleteRef([fRuntime L], resource);
+				[fGameCenterDelegate setLuaResourceForFriendRequest:nil];
+			});
 		}
-		
-		[fGameCenterDelegate setLuaResourceForFriendRequest:resource];
-		[friendrequestcontroller setValue:fGameCenterDelegate forKey:@"composeViewDelegate"];
-		
-		[viewcontroller presentViewController:friendrequestcontroller animated:YES completion:NULL];
 	}
 	else if ( 0 == strcasecmp(IPhoneGameCenter::kDashboardMatches, name ) )
 	{
@@ -1528,7 +1531,8 @@ IPhoneGameCenter::Request( lua_State *L )
 			for (uint i = 0; i < [[match participants] count]; i++ )
 			{
 				GKTurnBasedParticipant* participant = [[match participants] objectAtIndex:i];
-				lua_getfield( L, -1, [[participant playerID] UTF8String]);
+				NSString* partPlayerID = [[participant player] playerID];
+				lua_getfield( L, -1, [partPlayerID UTF8String]);
 				if (lua_isstring( L, -1 ))
 				{
 					NSString* outcome = [NSString stringWithUTF8String:lua_tostring( L, -1 )];
@@ -1640,7 +1644,7 @@ IPhoneGameCenter::Request( lua_State *L )
 			};
 			
 			// If the current participant is the local player then we have to pass on the turn to someone else with some data and set the match outcome
-			if ( [[[match currentParticipant] playerID] isEqualToString:[[GKLocalPlayer localPlayer] playerID]] && nextParticipant != nil)
+			if ( [[[[match currentParticipant] player] playerID] isEqualToString:[[GKLocalPlayer localPlayer] playerID]] && nextParticipant != nil)
 			{
 				GKTurnBasedParticipant* participant;
 				if ( nextParticipantIndex < 0)
@@ -2057,7 +2061,7 @@ IPhoneGameCenter::Request( lua_State *L )
 		}
 		
 		
-		[achievement reportAchievementWithCompletionHandler:^(NSError *error)
+		[GKAchievement reportAchievements:@[achievement] withCompletionHandler:^(NSError *error)
 		 {
 			 // Apple's GKTapper example warns that GameKit may not perform on the main thread.
 			 dispatch_async(dispatch_get_main_queue(), ^(void)
@@ -2067,7 +2071,7 @@ IPhoneGameCenter::Request( lua_State *L )
 									IPhoneGameCenterEvent e( kValueUnlockAchievement, error, GameCenter_NSDictionaryFromGKAchievement( achievement ) );
 									e.Push( [fRuntime L] );
 									CoronaLuaDispatchEvent( [fRuntime L], resource, 0 );
-									
+
 									CoronaLuaDeleteRef( [fRuntime L], resource );
 								}
 							}
@@ -2082,9 +2086,12 @@ IPhoneGameCenter::Request( lua_State *L )
 	else if ( 0 == strcasecmp(kValueLoadScores, command ) )
 	{
 		CoronaLuaRef resource = NULL;
-		GKLeaderboard* leaderboard = nil;
-		// This is a new API. Going to require all parameters to be in table parameter for simplicity.
-		if( ( lua_type( L, base + 1 ) == LUA_TTABLE ) ) // look for the listener inside the table
+		NSString* leaderboardID = nil;
+		GKLeaderboardPlayerScope playerScope = GKLeaderboardPlayerScopeGlobal;
+		GKLeaderboardTimeScope timeScope = GKLeaderboardTimeScopeAllTime;
+		NSRange range = NSMakeRange(1, 10);
+
+		if( ( lua_type( L, base + 1 ) == LUA_TTABLE ) )
 		{
 			lua_getfield( L, base + 1, "listener" );
 			if ( CoronaLuaIsListener( L, -1, IPhoneGameCenterEvent::kName ) )
@@ -2092,57 +2099,197 @@ IPhoneGameCenter::Request( lua_State *L )
 				resource = CoronaLuaNewRef( [fRuntime L], -1 );
 			}
 			lua_pop( L, 1 );
-			
+
 			lua_getfield( L, base + 1, "leaderboard" );
-			// GameCenter_GKLeaderboardFromLuaTable convenience API will do checking
-			leaderboard = GameCenter_GKLeaderboardFromLuaTable( L, -1 );
-			lua_pop( L, 1 );
+			if ( lua_type( L, -1 ) == LUA_TTABLE )
+			{
+				int lbIdx = lua_gettop(L);
+
+				lua_getfield( L, lbIdx, "category" );
+				if ( lua_type( L, -1 ) == LUA_TSTRING )
+				{
+					leaderboardID = [NSString stringWithUTF8String:lua_tostring( L, -1 )];
+				}
+				lua_pop( L, 1 );
+
+				lua_getfield( L, lbIdx, "playerScope" );
+				if ( lua_type( L, -1 ) == LUA_TSTRING )
+				{
+					const char* s = lua_tostring(L, -1);
+					if ( 0 == strcasecmp(kValuePlayerScopeGlobal, s) )
+						playerScope = GKLeaderboardPlayerScopeGlobal;
+					else if ( 0 == strcasecmp(kValuePlayerScopeFriendsOnly, s) )
+						playerScope = GKLeaderboardPlayerScopeFriendsOnly;
+				}
+				lua_pop( L, 1 );
+
+				lua_getfield( L, lbIdx, "timeScope" );
+				if ( lua_type( L, -1 ) == LUA_TSTRING )
+				{
+					const char* s = lua_tostring(L, -1);
+					if ( 0 == strcasecmp(kValueTimeScopeAllTime, s) )
+						timeScope = GKLeaderboardTimeScopeAllTime;
+					else if ( 0 == strcasecmp(kValueTimeScopeWeek, s) )
+						timeScope = GKLeaderboardTimeScopeWeek;
+					else if ( 0 == strcasecmp(kValueTimeScopeToday, s) )
+						timeScope = GKLeaderboardTimeScopeToday;
+				}
+				lua_pop( L, 1 );
+
+				lua_getfield( L, lbIdx, "range" );
+				if ( lua_type( L, -1 ) == LUA_TTABLE )
+				{
+					int n = (int)lua_objlen(L, -1);
+					if ( 2 == n )
+					{
+						lua_rawgeti(L, -1, 1);
+						NSUInteger rmin = lua_tointeger(L, -1);
+						lua_pop(L, 1);
+						lua_rawgeti(L, -1, 2);
+						NSUInteger rmax = lua_tointeger(L, -1);
+						lua_pop(L, 1);
+						range = NSMakeRange(rmin, rmax);
+					}
+				}
+				lua_pop( L, 1 );
+			}
+			lua_pop( L, 1 ); // pop leaderboard table
 		}
-		
-		[leaderboard loadScoresWithCompletionHandler:^(NSArray *scores, NSError *error)
-		 {
-			 // Apple's GKTapper example warns that GameKit may not perform on the main thread.
-			 dispatch_async(dispatch_get_main_queue(), ^(void)
+
+		if (@available(iOS 14.0, *))
+		{
+			if ( leaderboardID == nil )
+			{
+				NSLog(@"Error: gameNetwork/Game Center loadScores requires a 'category' in the leaderboard table");
+				if ( resource ) CoronaLuaDeleteRef( [fRuntime L], resource );
+			}
+			else
+			{
+				// Modern API: load leaderboard by ID, then load entries
+				[GKLeaderboard loadLeaderboardsWithIDs:@[leaderboardID] completionHandler:^(NSArray<GKLeaderboard *> *leaderboards, NSError *loadError)
+				{
+					if ( loadError || leaderboards.count == 0 )
+					{
+						dispatch_async(dispatch_get_main_queue(), ^(void)
+						{
+							if ( resource )
 							{
-								if ( resource )
-								{
-									// For event.data we are going to return a Lua array with elements consisting of Lua tables with fields
-									// containing copies the GKAchievement properties.
-									// Since this is a copy of the table and not the real object (userdata), the user must be aware that changing fields
-									// will have no impact on the real object.
-									
-									// First, we are going to create a copy of the achievements array, but instead of GKAchievements, each element
-									// will be an NSDictionary with key/value pairs that mimic the GKAchievement properties.
-									// Getting these elements into an NSDictionary will make it easier to convert to Lua tables later
-									// via Lua/Obj-C Bridge mechanisms (since we can't rely on full blown LuaCocoa to do everything for us automatically).
-									NSMutableArray* unboxedscores = nil;
-									if ( [scores count] > 0 )
-									{
-										unboxedscores = [NSMutableArray arrayWithCapacity:[scores count]];
-										for( GKScore* score in scores )
-										{
-											NSDictionary* unboxedscore = GameCenter_NSDictionaryFromGKScore( score );
-											[unboxedscores addObject:unboxedscore];
-										}
-										
-									}
-									
-									GKScore* localplayerscore = [leaderboard localPlayerScore];
-									NSDictionary* unboxedlocalplayerscore = nil;
-									if ( localplayerscore )
-									{
-										unboxedlocalplayerscore = GameCenter_NSDictionaryFromGKScore( localplayerscore );
-									}
-									IPhoneGameCenterLoadScoresEvent e( kValueLoadScores, error, unboxedscores, unboxedlocalplayerscore );
-									e.Push( [fRuntime L] );
-									CoronaLuaDispatchEvent( [fRuntime L], resource, 0 );
-									
-									CoronaLuaDeleteRef( [fRuntime L], resource );
-								}
+								IPhoneGameCenterLoadScoresEvent e( kValueLoadScores, loadError, nil, nil );
+								e.Push( [fRuntime L] );
+								CoronaLuaDispatchEvent( [fRuntime L], resource, 0 );
+								CoronaLuaDeleteRef( [fRuntime L], resource );
 							}
-							);
-		 }
-		 ];
+						});
+						return;
+					}
+
+					GKLeaderboard *lb = leaderboards.firstObject;
+					[lb loadEntriesForPlayerScope:playerScope timeScope:timeScope range:range completionHandler:^(GKLeaderboardEntry *localPlayerEntry, NSArray<GKLeaderboardEntry *> *entries, NSInteger totalPlayerCount, NSError *entriesError)
+					{
+						dispatch_async(dispatch_get_main_queue(), ^(void)
+						{
+							if ( resource )
+							{
+								// Convert GKLeaderboardEntry objects to NSDictionary format
+								// matching the legacy GKScore dictionary keys for Lua API compatibility
+								NSMutableArray* unboxedscores = nil;
+								if ( entries.count > 0 )
+								{
+									unboxedscores = [NSMutableArray arrayWithCapacity:entries.count];
+									for ( GKLeaderboardEntry* entry in entries )
+									{
+										NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity:9];
+										[dict setValue:leaderboardID forKey:@"category"];
+										[dict setValue:leaderboardID forKey:@"leaderboardIdentifier"];
+										[dict setValue:[NSNumber numberWithDouble:(double)[entry score]] forKey:@"value"];
+										[dict setValue:[[entry date] descriptionWithLocale:[NSLocale currentLocale]] forKey:@"date"];
+										[dict setValue:[entry formattedScore] forKey:@"formattedValue"];
+										if (@available(iOS 12.4, *)) {
+											[dict setValue:[[entry player] gamePlayerID] forKey:@"playerID"];
+										} else {
+											[dict setValue:[[entry player] playerID] forKey:@"playerID"];
+										}
+										[dict setValue:[NSNumber numberWithInteger:[entry rank]] forKey:@"rank"];
+										[dict setValue:[NSNumber numberWithDouble:(double)[entry context]] forKey:@"context"];
+										if ([entry date])
+										{
+											[dict setValue:[NSNumber numberWithInt:[[entry date] timeIntervalSince1970]] forKey:@"unixTime"];
+										}
+										[unboxedscores addObject:dict];
+									}
+								}
+
+								NSDictionary* unboxedlocalplayerscore = nil;
+								if ( localPlayerEntry )
+								{
+									NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity:9];
+									[dict setValue:leaderboardID forKey:@"category"];
+									[dict setValue:leaderboardID forKey:@"leaderboardIdentifier"];
+									[dict setValue:[NSNumber numberWithDouble:(double)[localPlayerEntry score]] forKey:@"value"];
+									[dict setValue:[[localPlayerEntry date] descriptionWithLocale:[NSLocale currentLocale]] forKey:@"date"];
+									[dict setValue:[localPlayerEntry formattedScore] forKey:@"formattedValue"];
+									if (@available(iOS 12.4, *)) {
+										[dict setValue:[[localPlayerEntry player] gamePlayerID] forKey:@"playerID"];
+									} else {
+										[dict setValue:[[localPlayerEntry player] playerID] forKey:@"playerID"];
+									}
+									[dict setValue:[NSNumber numberWithInteger:[localPlayerEntry rank]] forKey:@"rank"];
+									[dict setValue:[NSNumber numberWithDouble:(double)[localPlayerEntry context]] forKey:@"context"];
+									if ([localPlayerEntry date])
+									{
+										[dict setValue:[NSNumber numberWithInt:[[localPlayerEntry date] timeIntervalSince1970]] forKey:@"unixTime"];
+									}
+									unboxedlocalplayerscore = dict;
+								}
+
+								IPhoneGameCenterLoadScoresEvent e( kValueLoadScores, entriesError, unboxedscores, unboxedlocalplayerscore );
+								e.Push( [fRuntime L] );
+								CoronaLuaDispatchEvent( [fRuntime L], resource, 0 );
+								CoronaLuaDeleteRef( [fRuntime L], resource );
+							}
+						});
+					}];
+				}];
+			}
+		}
+		else
+		{
+			// Legacy path for iOS < 14 using deprecated GKLeaderboard APIs
+			lua_getfield( L, base + 1, "leaderboard" );
+			GKLeaderboard* leaderboard = GameCenter_GKLeaderboardFromLuaTable( L, -1 );
+			lua_pop( L, 1 );
+
+			[leaderboard loadScoresWithCompletionHandler:^(NSArray *scores, NSError *error)
+			 {
+				 dispatch_async(dispatch_get_main_queue(), ^(void)
+				 {
+					 if ( resource )
+					 {
+						 NSMutableArray* unboxedscores = nil;
+						 if ( [scores count] > 0 )
+						 {
+							 unboxedscores = [NSMutableArray arrayWithCapacity:[scores count]];
+							 for( GKScore* score in scores )
+							 {
+								 NSDictionary* unboxedscore = GameCenter_NSDictionaryFromGKScore( score );
+								 [unboxedscores addObject:unboxedscore];
+							 }
+						 }
+
+						 GKScore* localplayerscore = [leaderboard localPlayerScore];
+						 NSDictionary* unboxedlocalplayerscore = nil;
+						 if ( localplayerscore )
+						 {
+							 unboxedlocalplayerscore = GameCenter_NSDictionaryFromGKScore( localplayerscore );
+						 }
+						 IPhoneGameCenterLoadScoresEvent e( kValueLoadScores, error, unboxedscores, unboxedlocalplayerscore );
+						 e.Push( [fRuntime L] );
+						 CoronaLuaDispatchEvent( [fRuntime L], resource, 0 );
+						 CoronaLuaDeleteRef( [fRuntime L], resource );
+					 }
+				 });
+			 }];
+		}
 	}
 	
 	
@@ -2180,18 +2327,18 @@ IPhoneGameCenter::Request( lua_State *L )
 		}
 		
 		
-		[playerscore reportScoreWithCompletionHandler:^(NSError *error)
+		[GKScore reportScores:@[playerscore] withCompletionHandler:^(NSError *error)
 		 {
 			 // Apple's GKTapper example warns that GameKit may not perform on the main thread.
 			 dispatch_async(dispatch_get_main_queue(), ^(void)
 							{
 								if ( resource )
 								{
-									
+
 									IPhoneGameCenterEvent e( kValueSetHighScore, error, playerdictionary );
 									e.Push( [fRuntime L] );
 									CoronaLuaDispatchEvent( [fRuntime L], resource, 0 );
-									
+
 									CoronaLuaDeleteRef( [fRuntime L], resource );
 								}
 							}
@@ -2216,18 +2363,32 @@ IPhoneGameCenter::Request( lua_State *L )
 		}
 		
 		
-		[GKLeaderboard loadCategoriesWithCompletionHandler:^(NSArray *categories, NSArray *titles, NSError *error)
+		[GKLeaderboard loadLeaderboardsWithCompletionHandler:^(NSArray *leaderboards, NSError *error)
 		 {
 			 // Apple's GKTapper example warns that GameKit may not perform on the main thread.
 			 dispatch_async(dispatch_get_main_queue(), ^(void)
 							{
 								if ( resource )
 								{
-									// Return an array of tables. Each table is has two keys 'category' and 'title'.
+									// Return an array of tables. Each table has two keys 'category' and 'title'.
+									// Build arrays matching the old categories/titles format for backward compatibility.
+									NSMutableArray* categories = [NSMutableArray arrayWithCapacity:[leaderboards count]];
+									NSMutableArray* titles = [NSMutableArray arrayWithCapacity:[leaderboards count]];
+									for ( GKLeaderboard* lb in leaderboards )
+									{
+										NSString* identifier = @"";
+										if ( @available(iOS 14.0, *) )
+										{
+											identifier = [lb baseLeaderboardID] ?: @"";
+										}
+										NSString* title = [lb title] ?: @"";
+										[categories addObject:identifier];
+										[titles addObject:title];
+									}
 									IPhoneGameCenterEvent e( kValueFetchLeaderboardCategories, error, GameCenter_NSArrayFromCategoriesAndTitles( categories, titles ) );
 									e.Push( [fRuntime L] );
 									CoronaLuaDispatchEvent( [fRuntime L], resource, 0 );
-									
+
 									CoronaLuaDeleteRef( [fRuntime L], resource );
 								}
 							}
@@ -2297,18 +2458,36 @@ IPhoneGameCenter::Request( lua_State *L )
 			lua_pop( L, 1 );
 		}
 		
-		[[GKLocalPlayer localPlayer] loadFriendsWithCompletionHandler:^(NSArray *friends, NSError *error)
+		// Modern loadFriends returns GKPlayer objects. Extract player IDs for backward compatibility.
+		[[GKLocalPlayer localPlayer] loadRecentPlayersWithCompletionHandler:^(NSArray<GKPlayer *> *recentPlayers, NSError *error)
 		 {
-			 // Apple's GKTapper example warns that GameKit may not perform on the main thread.
 			 dispatch_async(dispatch_get_main_queue(), ^(void)
 							{
 								if ( resource )
 								{
-									// Returns an array of strings
-									IPhoneGameCenterEvent e( kValueFetchFriends, error, friends );
+									// Convert GKPlayer array to player ID strings for backward compatibility
+									NSMutableArray* friendIDs = nil;
+									if ( [recentPlayers count] > 0 )
+									{
+										friendIDs = [NSMutableArray arrayWithCapacity:[recentPlayers count]];
+										for ( GKPlayer* player in recentPlayers )
+										{
+											NSString* pid = nil;
+											if ( @available(iOS 12.4, *) )
+											{
+												pid = [player gamePlayerID];
+											}
+											else
+											{
+												pid = [player playerID];
+											}
+											if ( pid ) [friendIDs addObject:pid];
+										}
+									}
+									IPhoneGameCenterEvent e( kValueFetchFriends, error, friendIDs );
 									e.Push( [fRuntime L] );
 									CoronaLuaDispatchEvent( [fRuntime L], resource, 0 );
-									
+
 									CoronaLuaDeleteRef( [fRuntime L], resource );
 								}
 							}
@@ -2402,6 +2581,7 @@ IPhoneGameCenter::Request( lua_State *L )
 	}
 	
 	// 	gameNetwork.request( "loadFriendRequestMaxNumberOfRecipients", { listener=requestCallback} )
+	// Note: GKFriendRequestComposeViewController was removed from GameKit.
 	else if ( 0 == strcasecmp(kValueFetchFriendRequestMaxNumberOfRecipients, command ) )
 	{
 		CoronaLuaRef resource = NULL;
@@ -2413,21 +2593,22 @@ IPhoneGameCenter::Request( lua_State *L )
 				resource = CoronaLuaNewRef( [fRuntime L], -1 );
 			}
 			lua_pop( L, 1 );
-			
+
 		}
-		
-		// We're kind of faking things here. Once logged in, we already have the local player inforation so we can just return it.
-		// But for consistency, let's do it though a block callback like the others (which may help avoid recursion issues).
-		// dispatch_after(DISPATCH_TIME_NOW, ...) may do what we want, but the docs suggest doing dispatch_async is better for that case.
+
+		NSLog(@"WARNING: loadFriendRequestMaxNumberOfRecipients is no longer supported. GKFriendRequestComposeViewController was removed from GameKit.\n");
 		dispatch_async(dispatch_get_main_queue(), ^(void)
 					   {
 						   if ( resource )
 						   {
-							   // Returns an array of strings
-							   IPhoneGameCenterEvent e( kValueFetchFriendRequestMaxNumberOfRecipients, nil, [NSNumber numberWithInt:[GKFriendRequestComposeViewController maxNumberOfRecipients]] );
+							   NSMutableDictionary* errordetail = [NSMutableDictionary dictionary];
+							   [errordetail setValue:NSLocalizedString(@"Friend requests are no longer supported by Game Center.", @"Friend requests are no longer supported by Game Center.") forKey:NSLocalizedDescriptionKey];
+							   NSError* error = [NSError errorWithDomain:@"com.ansca.corona.gamenetwork.gamecenter" code:3 userInfo:errordetail];
+
+							   IPhoneGameCenterEvent e( kValueFetchFriendRequestMaxNumberOfRecipients, error, [NSNumber numberWithInt:0] );
 							   e.Push( [fRuntime L] );
 							   CoronaLuaDispatchEvent( [fRuntime L], resource, 0 );
-							   
+
 							   CoronaLuaDeleteRef( [fRuntime L], resource );
 						   }
 					   }
@@ -2716,7 +2897,7 @@ IPhoneGameCenter::findParticipantInMatch( GKTurnBasedMatch* match, NSString* par
 	
 	for (uint i = 0; i < [[match participants] count]; i++)
 	{
-		if ( [[[[match participants] objectAtIndex:i] playerID] isEqualToString:participantID] )
+		if ( [[[[[match participants] objectAtIndex:i] player] playerID] isEqualToString:participantID] )
 		{
 			participant = [[match participants] objectAtIndex:i];
 			break;
@@ -2725,10 +2906,10 @@ IPhoneGameCenter::findParticipantInMatch( GKTurnBasedMatch* match, NSString* par
 	return participant;
 }
 
-NSInteger
+GKTurnBasedMatchOutcome
 IPhoneGameCenter::outcomeFromNSString( NSString* outcomeInput )
 {
-	NSInteger outcome = GKTurnBasedMatchOutcomeNone;
+	GKTurnBasedMatchOutcome outcome = GKTurnBasedMatchOutcomeNone;
 	if ( [outcomeInput isEqualToString:[NSString stringWithUTF8String:"first"]] )
 	{
 		outcome = GKTurnBasedMatchOutcomeFirst;

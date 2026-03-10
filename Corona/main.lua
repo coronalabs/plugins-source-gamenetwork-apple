@@ -331,27 +331,32 @@ function requestCallback( event )
 end
 
 local function initCallback( event )
+	print("== initCallback called ==")
+	print("  event.type: " .. tostring(event.type))
+	print("  event.data: " .. tostring(event.data))
+	print("  event.errorMessage: " .. tostring(event.errorMessage))
+	print("  event.errorCode: " .. tostring(event.errorCode))
+
 	-- "showSignIn" is only available on iOS 6+
 	if event.type == "showSignIn" then
-		-- This is an opportunity to pause your game or do other things you might need to do while the Game Center Sign-In controller is up.
-		-- For the iOS 6.0 landscape orientation bug, this is an opportunity to remove native objects so they won't rotate.
+		print("  -> showSignIn branch (Game Center sign-in UI displayed)")
 	-- This is type "init" for all versions of Game Center.
 	elseif event.data then
+		print("  -> authenticated! Setting loggedIntoGC = true")
 		loggedIntoGC = true
 		gameNetwork.request( "loadScores", { leaderboard={ category=leaderBoards[currentBoard], playerScope="Global", timeScope="AllTime", range={1,3} }, listener=requestCallback } )
+	else
+		print("  -> NOT authenticated. event.data is falsy.")
 	end
 
 end
 
--- system event handler -----------------------------------------------------------------
+-- initialize Game Center ---------------------------------------------------------------
 
-local function onSystemEvent( event ) 
-	if "applicationStart" == event.type then
-		loggedIntoGC = false
-		gameNetwork.init( "gamecenter", { listener=initCallback } )
-		return true
-	end
-end
-Runtime:addEventListener( "system", onSystemEvent )
+loggedIntoGC = false
+print("== Calling gameNetwork.init ==")
+gameNetwork.init( "gamecenter", { listener=initCallback } )
+print("== gameNetwork.init returned ==")
+
 ui.createTabs( widget )
 composer.gotoScene( "scoreScene" )

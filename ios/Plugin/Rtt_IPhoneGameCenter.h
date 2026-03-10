@@ -103,7 +103,7 @@ class IPhoneGameCenter
 		virtual bool Show( lua_State *L );
 		virtual int Request( lua_State *L );
 		
-		static NSInteger outcomeFromNSString( NSString* outcomeInput );
+		static GKTurnBasedMatchOutcome outcomeFromNSString( NSString* outcomeInput );
 		static NSString* nsstringFromOutcome( GKTurnBasedMatchOutcome outcome );
 		static NSString* nsstringFromStatus( GKTurnBasedParticipantStatus status);
 		
@@ -126,7 +126,7 @@ class IPhoneGameCenter
 // ----------------------------------------------------------------------------
 
 
-@interface GameCenterDelegate :  NSObject <GKLeaderboardViewControllerDelegate, GKAchievementViewControllerDelegate, GKFriendRequestComposeViewControllerDelegate>
+@interface GameCenterDelegate :  NSObject <GKGameCenterControllerDelegate>
 
 @property(nonatomic, assign) CoronaLuaRef luaResourceForLeaderboard;
 @property(nonatomic, assign) CoronaLuaRef luaResourceForAchievement;
@@ -141,7 +141,7 @@ class IPhoneGameCenter
 @property(nonatomic, assign) id<CoronaRuntime> runtime;
 @end
 
-@interface TurnBasedEventHandlerDelegate :  NSObject <GKTurnBasedEventHandlerDelegate>
+@interface TurnBasedEventHandlerDelegate :  NSObject <GKLocalPlayerListener>
 
 @property(nonatomic, assign) CoronaLuaRef luaResourceForEventHandler;
 @property(nonatomic, assign) NSMutableDictionary* fMatchesDictionary;

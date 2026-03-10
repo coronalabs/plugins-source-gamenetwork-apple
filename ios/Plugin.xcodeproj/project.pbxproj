@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F8C50A5819B95DA800F17D98 /* IOSGameCenterProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = F8C50A5319B95DA800F17D98 /* IOSGameCenterProvider.mm */; };
-		F8C50A5919B95DA800F17D98 /* Rtt_IPhoneGameCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = F8C50A5519B95DA800F17D98 /* Rtt_IPhoneGameCenter.mm */; };
-		F8C50A5A19B95DA800F17D98 /* Rtt_IPhoneGameCenterEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = F8C50A5719B95DA800F17D98 /* Rtt_IPhoneGameCenterEvent.mm */; };
+		DBE5AFAA2F5F18D900E106A8 /* Rtt_IPhoneGameCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = DBE5AFA72F5F18D900E106A8 /* Rtt_IPhoneGameCenter.mm */; };
+		DBE5AFAB2F5F18D900E106A8 /* IOSGameCenterProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = DBE5AFA52F5F18D900E106A8 /* IOSGameCenterProvider.mm */; };
+		DBE5AFAC2F5F18D900E106A8 /* Rtt_IPhoneGameCenterEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = DBE5AFA92F5F18D900E106A8 /* Rtt_IPhoneGameCenterEvent.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,12 +26,13 @@
 
 /* Begin PBXFileReference section */
 		A4E253B6166D6FB300DCDC2C /* libgameNetwork-apple.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgameNetwork-apple.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F8C50A5219B95DA800F17D98 /* IOSGameCenterProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOSGameCenterProvider.h; path = Plugin/IOSGameCenterProvider.h; sourceTree = "<group>"; };
-		F8C50A5319B95DA800F17D98 /* IOSGameCenterProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IOSGameCenterProvider.mm; path = Plugin/IOSGameCenterProvider.mm; sourceTree = "<group>"; };
-		F8C50A5419B95DA800F17D98 /* Rtt_IPhoneGameCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rtt_IPhoneGameCenter.h; path = Plugin/Rtt_IPhoneGameCenter.h; sourceTree = "<group>"; };
-		F8C50A5519B95DA800F17D98 /* Rtt_IPhoneGameCenter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Rtt_IPhoneGameCenter.mm; path = Plugin/Rtt_IPhoneGameCenter.mm; sourceTree = "<group>"; };
-		F8C50A5619B95DA800F17D98 /* Rtt_IPhoneGameCenterEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rtt_IPhoneGameCenterEvent.h; path = Plugin/Rtt_IPhoneGameCenterEvent.h; sourceTree = "<group>"; };
-		F8C50A5719B95DA800F17D98 /* Rtt_IPhoneGameCenterEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Rtt_IPhoneGameCenterEvent.mm; path = Plugin/Rtt_IPhoneGameCenterEvent.mm; sourceTree = "<group>"; };
+		DBE5AFA42F5F18D900E106A8 /* IOSGameCenterProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IOSGameCenterProvider.h; path = Plugin/IOSGameCenterProvider.h; sourceTree = "<group>"; };
+		DBE5AFA52F5F18D900E106A8 /* IOSGameCenterProvider.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = IOSGameCenterProvider.mm; path = Plugin/IOSGameCenterProvider.mm; sourceTree = "<group>"; };
+		DBE5AFA62F5F18D900E106A8 /* Rtt_IPhoneGameCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Rtt_IPhoneGameCenter.h; path = Plugin/Rtt_IPhoneGameCenter.h; sourceTree = "<group>"; };
+		DBE5AFA72F5F18D900E106A8 /* Rtt_IPhoneGameCenter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = Rtt_IPhoneGameCenter.mm; path = Plugin/Rtt_IPhoneGameCenter.mm; sourceTree = "<group>"; };
+		DBE5AFA82F5F18D900E106A8 /* Rtt_IPhoneGameCenterEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Rtt_IPhoneGameCenterEvent.h; path = Plugin/Rtt_IPhoneGameCenterEvent.h; sourceTree = "<group>"; };
+		DBE5AFA92F5F18D900E106A8 /* Rtt_IPhoneGameCenterEvent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = Rtt_IPhoneGameCenterEvent.mm; path = Plugin/Rtt_IPhoneGameCenterEvent.mm; sourceTree = "<group>"; };
+		F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,23 +46,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A447B609165D72A6009EA762 /* Plugin */ = {
+		A447B609165D72A6009EA762 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				F8C50A5219B95DA800F17D98 /* IOSGameCenterProvider.h */,
-				F8C50A5319B95DA800F17D98 /* IOSGameCenterProvider.mm */,
-				F8C50A5419B95DA800F17D98 /* Rtt_IPhoneGameCenter.h */,
-				F8C50A5519B95DA800F17D98 /* Rtt_IPhoneGameCenter.mm */,
-				F8C50A5619B95DA800F17D98 /* Rtt_IPhoneGameCenterEvent.h */,
-				F8C50A5719B95DA800F17D98 /* Rtt_IPhoneGameCenterEvent.mm */,
+				DBE5AFA42F5F18D900E106A8 /* IOSGameCenterProvider.h */,
+				DBE5AFA52F5F18D900E106A8 /* IOSGameCenterProvider.mm */,
+				DBE5AFA62F5F18D900E106A8 /* Rtt_IPhoneGameCenter.h */,
+				DBE5AFA72F5F18D900E106A8 /* Rtt_IPhoneGameCenter.mm */,
+				DBE5AFA82F5F18D900E106A8 /* Rtt_IPhoneGameCenterEvent.h */,
+				DBE5AFA92F5F18D900E106A8 /* Rtt_IPhoneGameCenterEvent.mm */,
 			);
-			name = Plugin;
+			name = Source;
 			sourceTree = "<group>";
 		};
 		A484110E15114F700074BD57 = {
 			isa = PBXGroup;
 			children = (
-				A447B609165D72A6009EA762 /* Plugin */,
+				A447B609165D72A6009EA762 /* Source */,
+				F54A40C01EE083A300AF417D /* CoronaNative */,
 				A484111A15114F700074BD57 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,6 +76,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F54A40C01EE083A300AF417D /* CoronaNative */ = {
+			isa = PBXGroup;
+			children = (
+				F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */,
+			);
+			name = CoronaNative;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -81,6 +91,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "gameNetwork-apple" */;
 			buildPhases = (
+				C2E70B581EE9F110006E4570 /* Corona Native */,
 				A4E253B2166D6FB300DCDC2C /* Sources */,
 				A4E253B3166D6FB300DCDC2C /* Frameworks */,
 				A4E253B4166D6FB300DCDC2C /* CopyFiles */,
@@ -100,13 +111,14 @@
 		A484111015114F700074BD57 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0820;
 			};
 			buildConfigurationList = A484111315114F700074BD57 /* Build configuration list for PBXProject "Plugin" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = A484110E15114F700074BD57;
@@ -119,14 +131,32 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		C2E70B581EE9F110006E4570 /* Corona Native */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Corona Native";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# echo \"CORONA_ROOT: ${CORONA_ROOT}\"\nif [ ! -d \"${CORONA_ROOT}\" ]\nthen\n    echo \"error: Corona Native has not been setup.  Run 'Native/SetupCoronaNative.app' in your Corona install to set it up\" >&2\n\n    exit 1\nelse\n    echo \"Building with Corona Native from $(readlink \"${CORONA_ROOT}\")\"\nfi";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		A4E253B2166D6FB300DCDC2C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F8C50A5919B95DA800F17D98 /* Rtt_IPhoneGameCenter.mm in Sources */,
-				F8C50A5A19B95DA800F17D98 /* Rtt_IPhoneGameCenterEvent.mm in Sources */,
-				F8C50A5819B95DA800F17D98 /* IOSGameCenterProvider.mm in Sources */,
+				DBE5AFAA2F5F18D900E106A8 /* Rtt_IPhoneGameCenter.mm in Sources */,
+				DBE5AFAB2F5F18D900E106A8 /* IOSGameCenterProvider.mm in Sources */,
+				DBE5AFAC2F5F18D900E106A8 /* Rtt_IPhoneGameCenterEvent.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,12 +165,27 @@
 /* Begin XCBuildConfiguration section */
 		A484114015114F700074BD57 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -148,32 +193,53 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/CoronaEnterprise/Corona/shared/include/Corona ${SRCROOT}/CoronaEnterprise/Corona/shared/include/lua ${SRCROOT}/CoronaEnterprise/Corona/ios/include/Corona";
 			};
 			name = Debug;
 		};
 		A484114115114F700074BD57 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/CoronaEnterprise/Corona/shared/include/Corona ${SRCROOT}/CoronaEnterprise/Corona/shared/include/lua ${SRCROOT}/CoronaEnterprise/Corona/ios/include/Corona";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -183,15 +249,11 @@
 			buildSettings = {
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				DSTROOT = "/tmp/ads-admob.dst";
+				DSTROOT = /tmp/plugin_library.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../sdk-admob/\"",
-					"\"$(SRCROOT)/../sdk-admob/ios\"",
-					"\"$(SRCROOT)/../sdk/admob/ios\"",
-				);
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -203,15 +265,11 @@
 			buildSettings = {
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				DSTROOT = "/tmp/ads-admob.dst";
+				DSTROOT = /tmp/plugin_library.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../sdk-admob/\"",
-					"\"$(SRCROOT)/../sdk-admob/ios\"",
-					"\"$(SRCROOT)/../sdk/admob/ios\"",
-				);
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
