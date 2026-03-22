@@ -107,7 +107,12 @@ static  __attribute__((ns_returns_autoreleased)) NSDictionary* GameCenter_NSDict
 	[dictionary setValue:[NSNumber numberWithDouble:[score value]] forKey:@"value"];
 	[dictionary setValue:[[score date] descriptionWithLocale:[NSLocale currentLocale]] forKey:@"date"];
 	[dictionary setValue:[score formattedValue] forKey:@"formattedValue"];
-	[dictionary setValue:[[score player] playerID] forKey:@"playerID"];
+	GKPlayer* scorePlayer = [score player];
+	if (scorePlayer) {
+		[dictionary setValue:[scorePlayer playerID] forKey:@"playerID"];
+		[dictionary setValue:[scorePlayer alias] forKey:@"alias"];
+		[dictionary setValue:[scorePlayer displayName] forKey:@"displayName"];
+	}
 	[dictionary setValue:[NSNumber numberWithInteger:[score rank]] forKey:@"rank"];
 	
 	// Special case for context which is iOS 5+ only.
@@ -2204,10 +2209,15 @@ IPhoneGameCenter::Request( lua_State *L )
 										[dict setValue:[NSNumber numberWithDouble:(double)[entry score]] forKey:@"value"];
 										[dict setValue:[[entry date] descriptionWithLocale:[NSLocale currentLocale]] forKey:@"date"];
 										[dict setValue:[entry formattedScore] forKey:@"formattedValue"];
-										if (@available(iOS 12.4, *)) {
-											[dict setValue:[[entry player] gamePlayerID] forKey:@"playerID"];
-										} else {
-											[dict setValue:[[entry player] playerID] forKey:@"playerID"];
+										GKPlayer* entryPlayer = [entry player];
+										if (entryPlayer) {
+											if (@available(iOS 12.4, *)) {
+												[dict setValue:[entryPlayer gamePlayerID] forKey:@"playerID"];
+											} else {
+												[dict setValue:[entryPlayer playerID] forKey:@"playerID"];
+											}
+											[dict setValue:[entryPlayer alias] forKey:@"alias"];
+											[dict setValue:[entryPlayer displayName] forKey:@"displayName"];
 										}
 										[dict setValue:[NSNumber numberWithInteger:[entry rank]] forKey:@"rank"];
 										[dict setValue:[NSNumber numberWithDouble:(double)[entry context]] forKey:@"context"];
@@ -2228,10 +2238,15 @@ IPhoneGameCenter::Request( lua_State *L )
 									[dict setValue:[NSNumber numberWithDouble:(double)[localPlayerEntry score]] forKey:@"value"];
 									[dict setValue:[[localPlayerEntry date] descriptionWithLocale:[NSLocale currentLocale]] forKey:@"date"];
 									[dict setValue:[localPlayerEntry formattedScore] forKey:@"formattedValue"];
-									if (@available(iOS 12.4, *)) {
-										[dict setValue:[[localPlayerEntry player] gamePlayerID] forKey:@"playerID"];
-									} else {
-										[dict setValue:[[localPlayerEntry player] playerID] forKey:@"playerID"];
+									GKPlayer* localEntryPlayer = [localPlayerEntry player];
+									if (localEntryPlayer) {
+										if (@available(iOS 12.4, *)) {
+											[dict setValue:[localEntryPlayer gamePlayerID] forKey:@"playerID"];
+										} else {
+											[dict setValue:[localEntryPlayer playerID] forKey:@"playerID"];
+										}
+										[dict setValue:[localEntryPlayer alias] forKey:@"alias"];
+										[dict setValue:[localEntryPlayer displayName] forKey:@"displayName"];
 									}
 									[dict setValue:[NSNumber numberWithInteger:[localPlayerEntry rank]] forKey:@"rank"];
 									[dict setValue:[NSNumber numberWithDouble:(double)[localPlayerEntry context]] forKey:@"context"];
