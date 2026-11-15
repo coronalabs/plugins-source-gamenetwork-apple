@@ -344,6 +344,15 @@ local function initCallback( event )
 	elseif event.data then
 		print("  -> authenticated! Setting loggedIntoGC = true")
 		loggedIntoGC = true
+		gameNetwork.request( "setAccessPoint", {
+			active = true,
+			location = "topTrailing",
+			listener = function( e )
+				local d = e.data or {}
+				print( "  accessPoint: active=" .. tostring(d.active) .. " visible=" .. tostring(d.visible) .. " location=" .. tostring(d.location)
+					.. " frame=(" .. tostring(d.x) .. ", " .. tostring(d.y) .. ", " .. tostring(d.width) .. ", " .. tostring(d.height) .. ")" )
+			end
+		} )
 		gameNetwork.request( "loadScores", { leaderboard={ category=leaderBoards[currentBoard], playerScope="Global", timeScope="AllTime", range={1,3} }, listener=requestCallback } )
 	else
 		print("  -> NOT authenticated. event.data is falsy.")

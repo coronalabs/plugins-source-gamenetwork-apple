@@ -89,6 +89,7 @@ class IPhoneGameCenter
 		static const char kValueFetchPlayers[];
 		static const char kValueFetchLocalPlayer[];
 		static const char kValueFetchFriendRequestMaxNumberOfRecipients[];
+		static const char kValueSetAccessPoint[];
 
 		static const char kValueVariablePlayerID[];
 	public:

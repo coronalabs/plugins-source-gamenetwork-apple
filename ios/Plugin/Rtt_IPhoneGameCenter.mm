@@ -968,6 +968,7 @@ const char IPhoneGameCenter::kValueFetchFriends[] = "loadFriends";
 const char IPhoneGameCenter::kValueFetchPlayers[] = "loadPlayers";
 const char IPhoneGameCenter::kValueFetchLocalPlayer[] = "loadLocalPlayer";
 const char IPhoneGameCenter::kValueFetchFriendRequestMaxNumberOfRecipients[] = "loadFriendRequestMaxNumberOfRecipients";
+const char IPhoneGameCenter::kValueSetAccessPoint[] = "setAccessPoint";
 
 const char IPhoneGameCenter::kValueLoadPlayerPhoto[] = "loadPlayerPhoto";
 const char IPhoneGameCenter::kValueLoadAchievementImage[] = "loadAchievementImage";
@@ -2900,6 +2901,116 @@ IPhoneGameCenter::Request( lua_State *L )
 						   }
 					   }
 					   );
+	}
+
+	// gameNetwork.request( "setAccessPoint", { active=true, location="topTrailing", showHighlights=false, listener=requestCallback } )
+	// All fields are optional. location: "topLeading", "topTrailing", "bottomLeading", "bottomTrailing".
+	// The listener's event.data = { active, visible, location, x, y, width, height } (frame in screen points).
+	else if ( 0 == strcasecmp(kValueSetAccessPoint, command ) )
+	{
+		CoronaLuaRef resource = NULL;
+		if ( @available(iOS 14.0, *) )
+		{
+			GKAccessPoint* accessPoint = [GKAccessPoint shared];
+
+			// Pin the access point to Solar2D's own window. Left unset, GameKit picks a
+			// window itself, and on iOS 27 in landscape it has been seen laying out
+			// against portrait/status-bar insets (~20% down from the top edge).
+			UIWindow* window = [[[fRuntime appViewController] view] window];
+			if ( window && [accessPoint parentWindow] != window )
+			{
+				[accessPoint setParentWindow:window];
+			}
+
+			if( ( lua_type( L, base + 1 ) == LUA_TTABLE ) )
+			{
+				lua_getfield( L, base + 1, "listener" );
+				if ( CoronaLuaIsListener( L, -1, IPhoneGameCenterEvent::kName ) )
+				{
+					resource = CoronaLuaNewRef( [fRuntime L], -1 );
+				}
+				lua_pop( L, 1 );
+
+				lua_getfield( L, base + 1, "location" );
+				if ( lua_type( L, -1 ) == LUA_TSTRING )
+				{
+					const char* location = lua_tostring( L, -1 );
+					if ( 0 == strcasecmp( "topLeading", location ) )
+					{
+						[accessPoint setLocation:GKAccessPointLocationTopLeading];
+					}
+					else if ( 0 == strcasecmp( "topTrailing", location ) )
+					{
+						[accessPoint setLocation:GKAccessPointLocationTopTrailing];
+					}
+					else if ( 0 == strcasecmp( "bottomLeading", location ) )
+					{
+						[accessPoint setLocation:GKAccessPointLocationBottomLeading];
+					}
+					else if ( 0 == strcasecmp( "bottomTrailing", location ) )
+					{
+						[accessPoint setLocation:GKAccessPointLocationBottomTrailing];
+					}
+					else
+					{
+						NSLog(@"WARNING: Unknown access point location for gameNetwork.request( \"setAccessPoint\" ): %s\n", location);
+					}
+				}
+				lua_pop( L, 1 );
+
+				lua_getfield( L, base + 1, "showHighlights" );
+				if ( lua_type( L, -1 ) == LUA_TBOOLEAN )
+				{
+					[accessPoint setShowHighlights:lua_toboolean( L, -1 )];
+				}
+				lua_pop( L, 1 );
+
+				lua_getfield( L, base + 1, "active" );
+				if ( lua_type( L, -1 ) == LUA_TBOOLEAN )
+				{
+					[accessPoint setActive:lua_toboolean( L, -1 )];
+				}
+				lua_pop( L, 1 );
+			}
+
+			// Dispatch on the next main-queue pass so GameKit has laid the access point out.
+			dispatch_async(dispatch_get_main_queue(), ^(void)
+						   {
+							   if ( resource )
+							   {
+								   GKAccessPoint* ap = [GKAccessPoint shared];
+								   NSString* locationName = @"topLeading";
+								   switch ( [ap location] )
+								   {
+									   case GKAccessPointLocationTopTrailing: locationName = @"topTrailing"; break;
+									   case GKAccessPointLocationBottomLeading: locationName = @"bottomLeading"; break;
+									   case GKAccessPointLocationBottomTrailing: locationName = @"bottomTrailing"; break;
+									   default: break;
+								   }
+								   CGRect frame = [ap frameInScreenCoordinates];
+								   NSDictionary* details = [NSDictionary dictionaryWithObjectsAndKeys:
+															[NSNumber numberWithBool:[ap isActive]], @"active",
+															[NSNumber numberWithBool:[ap isVisible]], @"visible",
+															locationName, @"location",
+															[NSNumber numberWithDouble:frame.origin.x], @"x",
+															[NSNumber numberWithDouble:frame.origin.y], @"y",
+															[NSNumber numberWithDouble:frame.size.width], @"width",
+															[NSNumber numberWithDouble:frame.size.height], @"height",
+															nil];
+
+								   IPhoneGameCenterEvent e( kValueSetAccessPoint, nil, details );
+								   e.Push( [fRuntime L] );
+								   CoronaLuaDispatchEvent( [fRuntime L], resource, 0 );
+
+								   CoronaLuaDeleteRef( [fRuntime L], resource );
+							   }
+						   }
+						   );
+		}
+		else
+		{
+			NSLog(@"WARNING: gameNetwork.request( \"setAccessPoint\" ) requires iOS 14 or later.\n");
+		}
 	}
 	return result;
 	
